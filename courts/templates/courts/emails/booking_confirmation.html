@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #f8f9fa; padding: 20px; text-align: center; }
+        .content { padding: 20px; }
+        .footer { text-align: center; padding: 20px; background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Booking Confirmation</h1>
+        </div>
+        
+        <div class="content">
+            <p>Dear {{ booking.guest_name }},</p>
+            
+            <p>Thank you for booking with The Courts. Here are your booking details:</p>
+            
+            <ul>
+                <li>Booking Reference: {{ booking.booking_reference }}</li>
+                <li>Date: {{ booking.start_time|date:"F d, Y" }}</li>
+                <li>Time: {{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</li>
+                <li>Court: {{ booking.court.name }}</li>
+                <li>Total Amount: PKR {{ booking.total_price|floatformat:2 }}</li>
+            </ul>
+            
+            <h3>Payment Instructions</h3>
+            <p>Please complete your payment using the following details:</p>
+            <p>[Add your bank account details here]</p>
+            
+            <p>Please keep your booking reference number handy for future correspondence.</p>
+        </div>
+        
+        <div class="footer">
+            <p>Questions? Contact us on WhatsApp</p>
+        </div>
+    </div>
+</body>
+</html>

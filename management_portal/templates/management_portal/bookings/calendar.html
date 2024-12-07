@@ -1,0 +1,191 @@
+{% extends "management_portal/base.html" %}
+{% load static %}
+
+{% block title %}Court Calendar - Management Portal{% endblock %}
+
+{% block extra_css %}
+<link href="https://unpkg.com/@fullcalendar/core@6.1.8/main.css" rel="stylesheet">
+<link href="https://unpkg.com/@fullcalendar/daygrid@6.1.8/main.css" rel="stylesheet">
+<link href="https://unpkg.com/@fullcalendar/timegrid@6.1.8/main.css" rel="stylesheet">
+
+<style>
+.calendar-section {
+    margin-bottom: 2rem;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.calendar-container {
+    height: 600px;
+    margin-top: 1rem;
+}
+
+.fc-event {
+    cursor: pointer;
+}
+
+.fc-event.pending {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000;
+}
+
+.fc-event.approved {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+.court-tabs {
+    margin-bottom: 1rem;
+}
+
+.court-tabs .nav-link {
+    color: #495057;
+}
+
+.court-tabs .nav-link.active {
+    font-weight: bold;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Court Calendar</h1>
+    </div>
+
+    {% for court_type, courts_data in calendar_data.items %}
+    <div class="calendar-section">
+        <h4>{{ court_type }} Courts</h4>
+        
+        <!-- Court Tabs -->
+        <ul class="nav nav-tabs court-tabs" id="courtTabs-{{ court_type|slugify }}" role="tablist">
+            {% for court in courts_data.courts %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {% if forloop.first %}active{% endif %}" 
+                        id="court-{{ court.id }}-tab" 
+                        data-bs-toggle="tab" 
+                        data-bs-target="#court-{{ court.id }}" 
+                        type="button" 
+                        role="tab">
+                    {{ court.name }}
+                </button>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Court Calendars -->
+        <div class="tab-content">
+            {% for court in courts_data.courts %}
+            <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+                 id="court-{{ court.id }}" 
+                 role="tabpanel">
+                <div class="calendar-container" id="calendar-{{ court.id }}"></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Booking Details Modal -->
+<div class="modal fade" id="bookingDetailsModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Reference:</strong> <span id="bookingRef"></span></p>
+                <p><strong>Guest:</strong> <span id="bookingGuest"></span></p>
+                <p><strong>Court:</strong> <span id="bookingCourt"></span></p>
+                <p><strong>Date:</strong> <span id="bookingDate"></span></p>
+                <p><strong>Time:</strong> <span id="bookingTime"></span></p>
+                <p><strong>Status:</strong> <span id="bookingStatus"></span></p>
+                <div id="notesSection" class="mt-3">
+                    <h6>Admin Notes:</h6>
+                    <div id="bookingNotes" class="border p-2 bg-light"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/@fullcalendar/core@6.1.8/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/daygrid@6.1.8/main.js"></script>
+<script src="https://unpkg.com/@fullcalendar/timegrid@6.1.8/main.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const calendarData = {{ calendar_data_json|safe }};
+    
+    for (const [courtType, data] of Object.entries(calendarData)) {
+        data.courts.forEach(court => {
+            const calendarEl = document.getElementById(`calendar-${court.id}`);
+            if (!calendarEl) return;
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridDay,timeGridWeek'
+                },
+                plugins: [ 'timeGrid', 'dayGrid' ],
+                slotMinTime: '06:00:00',
+                slotMaxTime: '23:00:00',
+                allDaySlot: false,
+                height: '100%',
+                nowIndicator: true,
+                businessHours: {
+                    daysOfWeek: [ 0, 1, 2, 3, 4, 5, 6 ],
+                    startTime: '06:00',
+                    endTime: '23:00',
+                },
+                scrollTime: '08:00:00',
+                events: data.events.filter(event => event.resourceId === court.id).map(event => ({
+                    ...event,
+                    classNames: [event.className],
+                })),
+                eventClick: function(info) {
+                    const event = info.event;
+                    const extendedProps = event.extendedProps;
+                    
+                    document.getElementById('bookingRef').textContent = extendedProps.reference;
+                    document.getElementById('bookingGuest').textContent = extendedProps.guest_name;
+                    document.getElementById('bookingCourt').textContent = extendedProps.court_name;
+                    document.getElementById('bookingDate').textContent = event.start.toLocaleDateString();
+                    document.getElementById('bookingTime').textContent = 
+                        `${event.start.toLocaleTimeString()} - ${event.end.toLocaleTimeString()}`;
+                    document.getElementById('bookingStatus').textContent = extendedProps.status;
+                    
+                    const notesSection = document.getElementById('notesSection');
+                    const bookingNotes = document.getElementById('bookingNotes');
+                    if (extendedProps.notes) {
+                        notesSection.style.display = 'block';
+                        bookingNotes.textContent = extendedProps.notes;
+                    } else {
+                        notesSection.style.display = 'none';
+                    }
+                    
+                    new bootstrap.Modal(document.getElementById('bookingDetailsModal')).show();
+                },
+                eventDidMount: function(info) {
+                    // Add tooltip
+                    info.el.title = `${info.event.extendedProps.guest_name}\n${info.event.start.toLocaleTimeString()} - ${info.event.end.toLocaleTimeString()}`;
+                }
+            });
+            
+            calendar.render();
+        });
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,106 @@
+{% extends 'courts/base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- User Information Card -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Personal Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="text-muted">Full Name</label>
+                        <p class="mb-0">{{ user.get_full_name }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted">Email</label>
+                        <p class="mb-0">{{ user.email }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted">Phone Number</label>
+                        <p class="mb-0">{{ user.phone_number }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted">WhatsApp Number</label>
+                        <p class="mb-0">{{ user.whatsapp_number|default:"Same as phone number" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted">Date of Birth</label>
+                        <p class="mb-0">{{ user.date_of_birth|date:"F j, Y" }}</p>
+                    </div>
+                    <div class="mb-3">
+                        <label class="text-muted">Member Since</label>
+                        <p class="mb-0">{{ user.date_joined|date:"F j, Y" }}</p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary btn-sm">
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <!-- Loyalty Points Card -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3 class="card-title">Loyalty Points</h3>
+                    <div class="display-4 text-primary mb-3">
+                        {{ user.loyalty_points }}
+                    </div>
+                    <p class="text-muted">Points earned from bookings</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings History -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">My Bookings</h5>
+                    <a href="{% url 'courts:booking' %}" class="btn btn-primary btn-sm">
+                        New Booking
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if bookings %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Reference</th>
+                                        <th>Court</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for booking in bookings %}
+                                    <tr>
+                                        <td>{{ booking.booking_reference }}</td>
+                                        <td>{{ booking.court.name }}</td>
+                                        <td>{{ booking.start_time|date:"M j, Y" }}</td>
+                                        <td>{{ booking.start_time|time:"g:i A" }}</td>
+                                        <td>
+                                            <span class="badge bg-{{ booking.status|lower }}">
+                                                {{ booking.status }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted mb-0">No bookings yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

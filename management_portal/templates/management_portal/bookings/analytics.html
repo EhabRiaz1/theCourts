@@ -1,0 +1,161 @@
+{% extends "management_portal/base.html" %}
+{% load static %}
+
+{% block title %}Analytics - Management Portal{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.css">
+<style>
+.stat-card {
+    border-left: 4px solid;
+}
+.stat-card.revenue {
+    border-left-color: #28a745;
+}
+.stat-card.bookings {
+    border-left-color: #007bff;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Analytics</h1>
+        
+        <!-- Date Range Filter -->
+        <form method="get" class="d-flex gap-3">
+            <div class="input-group" style="width: auto;">
+                <span class="input-group-text">From</span>
+                <input type="date" name="start_date" class="form-control" 
+                       value="{{ start_date|date:'Y-m-d' }}">
+            </div>
+            <div class="input-group" style="width: auto;">
+                <span class="input-group-text">To</span>
+                <input type="date" name="end_date" class="form-control" 
+                       value="{{ end_date|date:'Y-m-d' }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Apply</button>
+        </form>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card stat-card revenue">
+                <div class="card-body">
+                    <h5 class="card-title text-success">Total Revenue</h5>
+                    <p class="display-4">PKR {{ total_revenue|floatformat:2 }}</p>
+                    <p class="text-muted mb-0">
+                        {{ start_date|date:"M j, Y" }} - {{ end_date|date:"M j, Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card stat-card bookings">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">Total Bookings</h5>
+                    <p class="display-4">{{ total_bookings }}</p>
+                    <p class="text-muted mb-0">Completed bookings in period</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Revenue by Court Type -->
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Revenue by Court Type</h5>
+                    <canvas id="revenueChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Detailed Breakdown</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Court Type</th>
+                                    <th>Revenue</th>
+                                    <th>Bookings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for type, data in revenue_by_type.items %}
+                                <tr>
+                                    <td>{{ type }}</td>
+                                    <td>PKR {{ data.revenue|floatformat:2 }}</td>
+                                    <td>{{ data.count }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    const revenueData = {{ revenue_by_type|safe }};
+    
+    const labels = Object.keys(revenueData);
+    const revenues = labels.map(label => revenueData[label].revenue);
+    const bookingCounts = labels.map(label => revenueData[label].count);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Revenue (PKR)',
+                data: revenues,
+                backgroundColor: 'rgba(40, 167, 69, 0.5)',
+                borderColor: 'rgb(40, 167, 69)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'PKR ' + value.toLocaleString();
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            const bookings = bookingCounts[context.dataIndex];
+                            return [
+                                label + ': PKR ' + value.toLocaleString(),
+                                'Bookings: ' + bookings
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

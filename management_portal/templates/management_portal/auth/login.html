@@ -1,0 +1,45 @@
+{% extends "management_portal/base.html" %}
+
+{% block auth_content %}
+<div class="container">
+    <div class="row justify-content-center align-items-center" style="min-height: 100vh;">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-4">Management Portal</h3>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Invalid username or password.
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" id="id_username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Password</label>
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

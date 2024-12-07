@@ -1,0 +1,80 @@
+{% extends 'courts/admin/base_admin.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+</div>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title">Pending Bookings</h5>
+                <p class="card-text display-4">{{ pending_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Approved Bookings</h5>
+                <p class="card-text display-4">{{ approved_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title">Rejected Bookings</h5>
+                <p class="card-text display-4">{{ rejected_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Cancelled Bookings</h5>
+                <p class="card-text display-4">{{ cancelled_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Today's Bookings -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Today's Bookings</h5>
+    </div>
+    <div class="card-body">
+        {% if todays_bookings %}
+            {% for booking in todays_bookings %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h6 class="mb-1">{{ booking.guest_name }}</h6>
+                                <small class="text-muted">Ref: {{ booking.booking_reference }}</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="mb-1">{{ booking.court.name }}</h6>
+                                <small class="text-muted">{{ booking.court.get_court_type_display }}</small>
+                            </div>
+                            <div class="col-md-3">
+                                <h6 class="mb-1">{{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</h6>
+                                <small class="text-muted">{{ booking.duration_hours }} hours</small>
+                            </div>
+                            <div class="col-md-3 text-end">
+                                <span class="badge bg-{{ booking.status|lower }}">{{ booking.get_status_display }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-muted mb-0">No bookings for today</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

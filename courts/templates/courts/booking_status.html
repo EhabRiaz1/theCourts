@@ -1,0 +1,62 @@
+{% extends "courts/base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Check Booking Status</h4>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="mb-4">
+                        <div class="input-group">
+                            <input type="text" 
+                                   name="reference" 
+                                   class="form-control" 
+                                   placeholder="Enter your booking reference number"
+                                   value="{{ reference|default:'' }}"
+                                   required>
+                            <button type="submit" class="btn btn-primary">Check Status</button>
+                        </div>
+                    </form>
+
+                    {% if result %}
+                        {% if result.status == 'success' %}
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Booking Details</h5>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Reference:</strong> {{ result.data.reference }}</p>
+                                            <p><strong>Guest Name:</strong> {{ result.data.guest_name }}</p>
+                                            <p><strong>Court:</strong> {{ result.data.court }}</p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Date:</strong> {{ result.data.date }}</p>
+                                            <p><strong>Time:</strong> {{ result.data.time }}</p>
+                                            <p>
+                                                <strong>Status:</strong> 
+                                                <span class="badge bg-{% if result.data.status == 'Pending' %}warning
+                                                                    {% elif result.data.status == 'Approved' %}success
+                                                                    {% elif result.data.status == 'Rejected' %}danger
+                                                                    {% else %}secondary{% endif %}">
+                                                    {{ result.data.status }}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-danger">
+                                {{ result.message }}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

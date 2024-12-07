@@ -1,0 +1,196 @@
+{% extends "management_portal/base.html" %}
+{% load static %}
+
+{% block title %}All Bookings - Management Portal{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">All Active Bookings</h1>
+    </div>
+
+    {% csrf_token %}
+
+    {% if bookings %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Guest Name</th>
+                        <th>Contact</th>
+                        <th>Court</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Duration</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr id="booking-row-{{ booking.id }}">
+                        <td>{{ booking.booking_reference }}</td>
+                        <td>{{ booking.guest_name }}</td>
+                        <td>
+                            <small class="d-block">📞 {{ booking.guest_phone }}</small>
+                            <small class="d-block">✉️ {{ booking.guest_email }}</small>
+                        </td>
+                        <td>{{ booking.court.name }}</td>
+                        <td>{{ booking.start_time|date:"M j, Y" }}</td>
+                        <td>{{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</td>
+                        <td>{{ booking.duration_hours }} hours</td>
+                        <td>PKR {{ booking.total_price }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info me-1" 
+                                    onclick="viewNotes('{{ booking.booking_reference }}', '{{ booking.admin_notes|default:'' }}')"
+                                    title="View/Add Notes">
+                                <i class="fas fa-sticky-note"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" 
+                                    onclick="cancelBooking({{ booking.id }})"
+                                    title="Cancel Booking">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div class="alert alert-info">No active bookings found.</div>
+    {% endif %}
+</div>
+
+<!-- Notes Modal -->
+<div class="modal fade" id="notesModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Booking Notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">Booking Reference: <span id="bookingRef"></span></p>
+                <textarea id="adminNotes" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveNotes()">Save Notes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmCancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Cancellation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this booking? This action cannot be undone.</p>
+                <div class="mb-3">
+                    <label for="cancelNotes" class="form-label">Cancellation Notes (optional):</label>
+                    <textarea id="cancelNotes" class="form-control" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelButton">Cancel Booking</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let currentBookingId;
+
+function viewNotes(reference, notes) {
+    document.getElementById('bookingRef').textContent = reference;
+    document.getElementById('adminNotes').value = notes;
+    currentBookingId = reference;
+    new bootstrap.Modal(document.getElementById('notesModal')).show();
+}
+
+function saveNotes() {
+    const notes = document.getElementById('adminNotes').value;
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    fetch(`/management/api/bookings/${currentBookingId}/update-status/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrfToken
+        },
+        body: `notes=${encodeURIComponent(notes)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            bootstrap.Modal.getInstance(document.getElementById('notesModal')).hide();
+            location.reload();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to save notes. Please try again.');
+    });
+}
+
+function cancelBooking(bookingId) {
+    currentBookingId = bookingId;
+    const modal = new bootstrap.Modal(document.getElementById('confirmCancelModal'));
+    modal.show();
+    
+    document.getElementById('confirmCancelButton').onclick = function() {
+        const notes = document.getElementById('cancelNotes').value;
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        
+        fetch(`/management/api/bookings/${bookingId}/update-status/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': csrfToken
+            },
+            body: `status=CANCELLED&notes=${encodeURIComponent(notes)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Remove the row from the table
+                document.getElementById(`booking-row-${bookingId}`).remove();
+                modal.hide();
+                
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    Booking has been cancelled successfully.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                document.querySelector('.container-fluid').insertBefore(
+                    alertDiv,
+                    document.querySelector('.table-responsive')
+                );
+                
+                // If no more bookings, show the "no bookings" message
+                if (document.querySelectorAll('tbody tr').length === 0) {
+                    document.querySelector('.table-responsive').innerHTML = 
+                        '<div class="alert alert-info">No active bookings found.</div>';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to cancel booking. Please try again.');
+        });
+    };
+}
+</script>
+{% endblock %} 

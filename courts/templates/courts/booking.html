@@ -1,0 +1,381 @@
+{% extends 'courts/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .sport-card {
+        border: 2px solid #eee;
+        padding: 30px;
+        margin: 15px 0;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sport-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .sport-card.selected {
+        border-color: #007bff;
+        background-color: #f8f9fa;
+    }
+
+    .sport-card.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #007bff;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+    }
+
+    .booking-page {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .booking-page:first-child {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    /* Style for date picker */
+    .flatpickr-input {
+        background-color: white !important;
+        cursor: pointer;
+    }
+
+    .flatpickr-calendar {
+        background: white;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-radius: 8px;
+    }
+
+    /* Time slots styling */
+    .time-slots-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .time-slot {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        text-align: center;
+        cursor: pointer;
+        background: white;
+        transition: all 0.2s ease;
+    }
+
+    .time-slot:hover {
+        background-color: #f8f9fa;
+        border-color: #007bff;
+    }
+
+    .time-slot.selected {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress" id="bookingProgress" style="width: 20%"></div>
+    </div>
+
+    <!-- Page 1: Sport Selection -->
+    <div class="booking-page active" id="sportSelection">
+        <h3 class="mb-4">Select Your Sport</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="sport-card" data-sport="PICKLE" onclick="selectSport('PICKLE', this)">
+                    <h4>Pickle Ball</h4>
+                    <p class="text-primary fs-4 fw-bold">PKR 6,000/hour</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">✓ Professional Courts</li>
+                        <li class="mb-2">✓ Equipment Available</li>
+                        <li>✓ All Skill Levels</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="sport-card" data-sport="PADDLE" onclick="selectSport('PADDLE', this)">
+                    <h4>Paddle Ball</h4>
+                    <p class="text-primary fs-4 fw-bold">PKR 8,000/hour</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">✓ Premium Court</li>
+                        <li class="mb-2">✓ Professional Equipment</li>
+                        <li>✓ High Performance</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button class="btn btn-primary" onclick="nextPage()" id="sportNextBtn" disabled>Continue</button>
+        </div>
+    </div>
+
+    <!-- Page 2: Date & Duration -->
+    <div class="booking-page" id="dateSelection">
+        <h3 class="mb-4">Select Date & Duration</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label class="form-label">Select Date</label>
+                            <input type="text" id="datePicker" class="form-control">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Duration</label>
+                            <div class="input-group">
+                                <button class="btn btn-outline-secondary" id="decreaseDuration">-</button>
+                                <span class="form-control text-center" id="durationDisplay">1 hour</span>
+                                <button class="btn btn-outline-secondary" id="increaseDuration">+</button>
+                                <input type="hidden" id="duration" value="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button class="btn btn-secondary me-2" onclick="previousPage()">Back</button>
+            <button class="btn btn-primary" onclick="nextPage()" id="dateNextBtn" disabled>Continue</button>
+        </div>
+    </div>
+
+    <!-- Page 3: Time Slots -->
+    <div class="booking-page" id="timeSelection">
+        <h3 class="mb-4">Select Available Time</h3>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="time-slots-grid" id="timeSlots">
+                            <!-- Time slots will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Booking Summary</h5>
+                    </div>
+                    <div id="bookingSummary">
+                        <!-- Summary will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button class="btn btn-secondary me-2" onclick="previousPage()">Back</button>
+            <button class="btn btn-primary" onclick="nextPage()" id="timeNextBtn" disabled>Continue</button>
+        </div>
+    </div>
+
+    <!-- Page 4: User Details -->
+    <div class="booking-page" id="userDetails">
+        <h3 class="mb-4">Complete Your Booking</h3>
+        <div class="row">
+            <div class="col-md-8">
+                {% if user.is_authenticated %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Booking as {{ user.get_full_name }}</h5>
+                        <p class="card-text">Please confirm your contact details below:</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="userName" 
+                                       value="{{ user.get_full_name }}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" id="userEmail" 
+                                       value="{{ user.email }}" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="phoneNumber" 
+                                       value="{{ user.phone_number }}" required>
+                                <small class="form-text text-muted">You can update this if needed</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">WhatsApp Number</label>
+                                <input type="tel" class="form-control" id="whatsappNumber" 
+                                       value="{{ user.whatsapp_number }}"
+                                       placeholder="If different from phone number">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <small>
+                                <i class="fas fa-info-circle"></i> 
+                                Your booking confirmation will be sent to both your email and phone number
+                            </small>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-primary w-100" onclick="submitBooking()" id="submitBtn">
+                                Confirm Booking
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <h5 class="mb-0">Already have an account?</h5>
+                            </div>
+                            <div class="col-auto">
+                                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-primary">Log In</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Continue as Guest</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="guestForm" onsubmit="event.preventDefault(); submitBooking();">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Full Name*</label>
+                                    <input type="text" class="form-control" id="guestName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Email*</label>
+                                    <input type="email" class="form-control" id="guestEmail" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Phone Number*</label>
+                                    <input type="tel" class="form-control" id="guestPhone" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">WhatsApp Number</label>
+                                    <input type="tel" class="form-control" id="guestWhatsapp" 
+                                           placeholder="If different from phone number">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="phoneNumber">Phone Number *</label>
+                                    <input type="tel" class="form-control" id="phoneNumber" required>
+                                    <small class="form-text text-muted">Required for booking confirmation</small>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" id="submitBtn">Confirm Booking</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Booking Summary</h5>
+                    </div>
+                    <div id="bookingSummary">
+                        <!-- Summary will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button class="btn btn-secondary" onclick="previousPage()">Back</button>
+        </div>
+    </div>
+
+    <!-- Page 5: Confirmation -->
+    <div class="booking-page" id="confirmation">
+        <div class="text-center">
+            <div class="mb-4">
+                <div class="display-1 text-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="mt-3">Booking Request Submitted!</h3>
+                <p class="text-muted">Your booking is now pending confirmation.</p>
+                <p>You can check your booking status anytime using your reference number:
+                    <a href="{% url 'courts:booking_status' %}?reference={{ booking.booking_reference }}" class="btn btn-link">
+                        Check Booking Status
+                    </a>
+                </p>
+            </div>
+            
+            <div class="card mb-4 mx-auto" style="max-width: 500px;">
+                <div class="card-header">
+                    <h5 class="mb-0">Booking Reference: <span id="bookingReference" class="text-primary"></span></h5>
+                </div>
+                <div class="card-body">
+                    <div id="confirmationSummary">
+                        <!-- Final summary will be populated by JavaScript -->
+                    </div>
+                    <div class="alert alert-info mt-3">
+                        <h6 class="alert-heading">Next Steps:</h6>
+                        <ol class="mb-0 text-start">
+                            <li>You will receive payment instructions via email and WhatsApp</li>
+                            <li>Complete the payment to confirm your booking</li>
+                            <li>You'll receive a confirmation once payment is verified</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <a href="{% url 'courts:home' %}" class="btn btn-outline-primary me-2">Return Home</a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'accounts:profile' %}" class="btn btn-primary">View My Bookings</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal fade" id="errorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Error</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="{% static 'courts/js/booking.js' %}"></script>
+{% endblock %}
+{% endblock %}

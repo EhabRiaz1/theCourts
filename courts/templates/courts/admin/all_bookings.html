@@ -1,0 +1,177 @@
+{% extends 'courts/admin/base_admin.html' %}
+{% load static %}
+
+{% block admin_content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">All Bookings</h1>
+    
+    <!-- Filters -->
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="input-group me-2">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search bookings...">
+        </div>
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                Filter by Status
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('all', 'status')">All Statuses</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('PENDING', 'status')">Pending</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('APPROVED', 'status')">Approved</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('REJECTED', 'status')">Rejected</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('CANCELLED', 'status')">Cancelled</a></li>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                Filter by Court
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('all', 'court')">All Courts</a></li>
+                {% for court_type, display_name in court_types %}
+                <li><a class="dropdown-item" href="#" onclick="filterBookings('{{ court_type }}', 'court')">{{ display_name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="booking-cards">
+    {% if bookings %}
+        {% for booking in bookings %}
+        <div class="card mb-4 booking-card" 
+             data-court-type="{{ booking.court.court_type }}"
+             data-status="{{ booking.status }}"
+             data-search="{{ booking.booking_reference|lower }} {{ booking.guest_name|lower }} {{ booking.guest_email|lower }}">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Booking #{{ booking.booking_reference }}</h5>
+                <div>
+                    <span class="badge bg-{% if booking.status == 'PENDING' %}warning
+                                        {% elif booking.status == 'APPROVED' %}success
+                                        {% elif booking.status == 'REJECTED' %}danger
+                                        {% else %}secondary{% endif %}">
+                        {{ booking.get_status_display }}
+                    </span>
+                    {% if booking.last_modified_by %}
+                    <small class="text-muted ms-2">
+                        Updated by {{ booking.last_modified_by.get_full_name|default:booking.last_modified_by.username }}
+                    </small>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Guest Information</h6>
+                        <p class="mb-1"><strong>Name:</strong> {{ booking.guest_name }}</p>
+                        <p class="mb-1"><strong>Email:</strong> {{ booking.guest_email }}</p>
+                        <p class="mb-1"><strong>Phone:</strong> {{ booking.guest_phone }}</p>
+                        <p class="mb-1"><strong>WhatsApp:</strong> {{ booking.whatsapp_number|default:booking.guest_phone }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Booking Details</h6>
+                        <p class="mb-1"><strong>Court:</strong> {{ booking.court.name }} ({{ booking.court.get_court_type_display }})</p>
+                        <p class="mb-1"><strong>Date:</strong> {{ booking.start_time|date:"F j, Y" }}</p>
+                        <p class="mb-1"><strong>Time:</strong> {{ booking.start_time|time:"g:i A" }} - {{ booking.end_time|time:"g:i A" }}</p>
+                        <p class="mb-1"><strong>Duration:</strong> {{ booking.duration_hours }} hours</p>
+                        <p class="mb-1"><strong>Total Price:</strong> PKR {{ booking.total_price }}</p>
+                    </div>
+                </div>
+
+                {% if booking.admin_notes %}
+                <div class="mt-3">
+                    <h6>Admin Notes</h6>
+                    <p class="mb-0">{{ booking.admin_notes }}</p>
+                </div>
+                {% endif %}
+                
+                {% if booking.status == 'PENDING' %}
+                <div class="mt-4">
+                    <button class="btn btn-success" onclick="updateBookingStatus('{{ booking.id }}', 'APPROVED')">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn btn-danger" onclick="updateBookingStatus('{{ booking.id }}', 'REJECTED')">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                    <button class="btn btn-secondary" onclick="showNotesModal('{{ booking.id }}')">
+                        <i class="fas fa-comment"></i> Add Notes
+                    </button>
+                </div>
+                {% elif booking.status != 'CANCELLED' %}
+                <div class="mt-4">
+                    <button class="btn btn-warning" onclick="updateBookingStatus('{{ booking.id }}', 'CANCELLED')">
+                        <i class="fas fa-ban"></i> Cancel Booking
+                    </button>
+                    <button class="btn btn-secondary" onclick="showNotesModal('{{ booking.id }}')">
+                        <i class="fas fa-comment"></i> Add Notes
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                <small>Created: {{ booking.created_at|date:"F j, Y g:i A" }}</small>
+                {% if booking.updated_at != booking.created_at %}
+                <small class="ms-3">Last Updated: {{ booking.updated_at|date:"F j, Y g:i A" }}</small>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">No bookings found.</div>
+    {% endif %}
+</div>
+
+<!-- Notes Modal (same as in pending_bookings.html) -->
+<div class="modal fade" id="notesModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Admin Notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="adminNotes" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveAdminNotes()">Save Notes</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{{ block.super }}
+<script src="{% static 'courts/js/admin.js' %}"></script>
+<script>
+// Add search functionality
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const cards = document.querySelectorAll('.booking-card');
+    
+    cards.forEach(card => {
+        const searchText = card.dataset.search;
+        if (searchText.includes(searchTerm)) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+});
+
+// Extend the existing filterBookings function
+function filterBookings(value, type) {
+    const cards = document.querySelectorAll('.booking-card');
+    cards.forEach(card => {
+        if (value === 'all') {
+            card.style.display = 'block';
+        } else if (type === 'status') {
+            card.style.display = card.dataset.status === value ? 'block' : 'none';
+        } else if (type === 'court') {
+            card.style.display = card.dataset.courtType === value ? 'block' : 'none';
+        }
+    });
+}
+</script>
+{% endblock %} 

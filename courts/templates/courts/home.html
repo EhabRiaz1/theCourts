@@ -1,0 +1,127 @@
+{% extends 'courts/base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section id="section_1" class="section hero d-flex justify-content-center align-items-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7 col-12">
+                <div class="hero-text">
+                    <h2 class="mb-4">The best courts in Lahore</h2>
+                    <a href="{% url 'courts:booking' %}" class="custom-btn btn custom-link">Let's begin</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="section_2" class="section about section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
+                    <img src="{% static 'courts/images/the-courts-logo.png' %}" class="img-fluid" alt="The Courts Logo">
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="feature-module large">
+                            <h3 class="pt-2 mb-3">Premium Sports Experience</h3>
+                            <p>Located in the prime location of Gulberg, Lahore, The Courts offers a premium playing experience for both Padel and Pickleball enthusiasts.</p>
+                        </div>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="col-md-6">
+                        <div class="feature-module medium">
+                            <h4>Lahore's First</h4>
+                            <ul>
+                                <li>Proud home to Lahore's first Pickle Ball court</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="feature-module medium">
+                            <h4>Superior Playing Surface</h4>
+                            <ul>
+                                <li>Engineered for optimal grip and ball bounce</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Courts Section -->
+<section id="section_3" class="section courts section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2>Our Courts</h2>
+            </div>
+            
+            <!-- Pickle Ball Courts -->
+            <div class="col-md-6 mb-4">
+                <div class="court-card">
+                    <h3>Pickle Ball</h3>
+                    <p class="price">PKR 6,000/hour</p>
+                    <div class="features">
+                        <ul>
+                            <li>Professional grade courts</li>
+                            <li>High-intensity LED lighting</li>
+                            <li>Premium equipment available</li>
+                        </ul>
+                    </div>
+                    <a href="{% url 'courts:booking' %}?type=pickle" class="btn custom-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Padel Court -->
+            <div class="col-md-6 mb-4">
+                <div class="court-card">
+                    <h3>Padel Ball</h3>
+                    <p class="price">PKR 8,000/hour</p>
+                    <div class="features">
+                        <ul>
+                            <li>Professional grade court</li>
+                            <li>High-intensity LED lighting</li>
+                            <li>Premium equipment available</li>
+                        </ul>
+                    </div>
+                    <a href="{% url 'courts:booking' %}?type=padel" class="btn custom-btn">Book Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="quick-actions mb-4">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Book a Court</h5>
+                    <p class="card-text">Reserve your preferred court now</p>
+                    <a href="{% url 'courts:booking' %}" class="btn btn-primary">Book Now</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Check Booking Status</h5>
+                    <p class="card-text">Track your booking using reference number</p>
+                    <a href="{% url 'courts:booking_status' %}" class="btn btn-secondary">Check Status</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

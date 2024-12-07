@@ -1,0 +1,27 @@
+{% extends 'courts/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="text-center">Login</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary w-100">Login</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="mb-0">Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
+                    <p class="mt-2 mb-0">Want to book without an account? <a href="{% url 'courts:booking' %}">Book as Guest</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
