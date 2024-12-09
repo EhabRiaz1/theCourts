@@ -67,7 +67,7 @@
                             <td>{{ booking.court.name }}</td>
                             <td>{{ booking.start_time|date:"M j, Y H:i" }}</td>
                             <td>
-                                <span class="badge bg-{{ booking.status|lower }}">
+                                <span class="badge bg-{{ booking.status|lower }} text-dark">
                                     {{ booking.get_status_display }}
                                 </span>
                             </td>
