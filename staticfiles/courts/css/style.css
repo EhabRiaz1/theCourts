@@ -1,0 +1,313 @@
+:root {
+    --primary-color: rgb(44, 42, 57);
+    --secondary-color: rgb(208, 224, 247);
+    --white-color: #ffffff;
+    --dark-color: rgb(27, 27, 27);
+}
+
+/* PRELOADER */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--white-color);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preloader .spinner {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preloader .spinner-rotate {
+    width: 70px;
+    height: 70px;
+    border: 4px solid var(--dark-color);
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Make sure body is visible */
+body {
+    background: var(--white-color);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* SECTIONS */
+.section {
+    padding: 120px 0;
+}
+
+.section-padding {
+    padding: 100px 0;
+}
+
+.hero {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(170deg, var(--primary-color) 60%, var(--secondary-color) 60%);
+}
+
+.hero-text {
+    color: var(--white-color);
+}
+
+.hero-text h2 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.about {
+    background: var(--primary-color);
+}
+
+.featured-block {
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.featured-block:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-5px);
+}
+
+.booking {
+    background: var(--white-color);
+}
+
+.status-check {
+    background: var(--secondary-color);
+}
+
+/* FOOTER */
+.site-footer {
+    background: var(--primary-color);
+    padding: 40px 0;
+    color: var(--white-color);
+}
+
+.copyright-text-wrap {
+    text-align: center;
+}
+
+.copyright-text {
+    color: var(--secondary-color);
+}
+
+.site-footer a {
+    color: var(--white-color);
+    text-decoration: none;
+}
+
+.site-footer a:hover {
+    color: var(--secondary-color);
+}
+
+/* Court Cards */
+.court-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.court-card:hover {
+    transform: translateY(-5px);
+}
+
+.court-card h3 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.court-card .price {
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.custom-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.custom-btn:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Feature Modules */
+.feature-module {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.feature-module.large {
+    margin-bottom: 2rem;
+}
+
+.feature-module h4 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Base navbar styles */
+.navbar {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0;  /* Remove default padding */
+    transition: all 0.3s ease;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Container for navbar content */
+.navbar .container {
+    background: rgba(255, 255, 255, 0.15);
+    margin: 20px auto;
+    padding: 15px 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Ghost navbar (non-functional) */
+.navbar-ghost {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90px;  /* Adjust based on your navbar height */
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 999;  /* Below the main navbar */
+}
+
+/* Sticky navbar state */
+.navbar.sticky {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+}
+
+.navbar.sticky .container {
+    margin: 10px auto;
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand {
+    color: var(--white-color);
+    font-size: 24px;
+    font-weight: var(--font-weight-bold);
+}
+
+.navbar-brand:hover {
+    color: var(--primary-color);
+}
+
+.navbar-nav .nav-link {
+    color: var(--white-color);
+    font-size: var(--menu-font-size);
+    font-weight: var(--font-weight-medium);
+    padding: 8px 15px;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--primary-color);
+}
+
+.navbar-toggler {
+    border: none;
+    padding: 10px;
+}
+
+.navbar-toggler:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.custom-btn {
+    background: var(--primary-color);
+    color: var(--white-color);
+    padding: 8px 20px;
+    border-radius: var(--border-radius-large);
+    transition: all 0.3s ease;
+}
+
+.custom-btn:hover {
+    background: var(--secondary-color);
+    color: var(--white-color);
+    transform: translateY(-2px);
+}
+
+/* Ghost Navbar Styles */
+.ghost-navbar {
+    background: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 1030;
+}
+
+.ghost-navbar .navbar-brand,
+.ghost-navbar .nav-link {
+    color: var(--white-color);
+    opacity: 0.9;
+}
+
+.ghost-navbar .nav-link:hover {
+    opacity: 1;
+}
+
+/* Main Navbar Styles */
+.main-navbar {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    margin-top: 0;
+    transition: all 0.3s ease;
+    z-index: 1020;
+}
+
+.main-navbar.sticky {
+    margin-top: 60px; /* Height of ghost navbar */
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}

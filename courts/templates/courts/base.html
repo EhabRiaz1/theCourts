@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}The Courts{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add these in the head section -->
+    {% load static %}
+    <link href="{% static 'courts/css/templatemo-first-portfolio-style.css' %}" rel="stylesheet">
     
     <!-- Custom CSS -->
-    {% load static %}
     <link rel="stylesheet" href="{% static 'courts/css/style.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="{% static 'courts/css/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'courts/css/templatemo-first-portfolio-style.css' %}" rel="stylesheet">
     <script>
         function getCookie(name) {
             let cookieValue = null;
@@ -28,26 +33,159 @@
             return cookieValue;
         }
         </script>
+    {% block extra_css %}
+    <style>
+    .navbar {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px 0;
+        transition: all 0.3s ease;
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 999;
+        width: 100%;
+    }
+
+    .navbar.navbar-sticky {
+        background: var(--white-color);
+        box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.08);
+        padding: 15px 0;
+    }
+
+    .navbar:not(.navbar-sticky) .nav-link,
+    .navbar:not(.navbar-sticky) .navbar-brand,
+    .navbar:not(.navbar-sticky) .custom-btn {
+        color: white;  /* Non-sticky state */
+    }
+
+    .navbar.navbar-sticky .nav-link,
+    .navbar.navbar-sticky .navbar-brand,
+    .navbar.navbar-sticky .custom-btn {
+        color: black;  /* Sticky state */
+    }
+
+    .navbar-brand {
+        font-size: 24px;
+        font-weight: 500;
+    }
+
+    .nav-link {
+        font-size: 18px;
+        font-weight: 300;
+        padding: 15px 25px;
+        transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+        color: #fff !important;  /* Override any other color settings */
+        text-shadow: 0 0 10px #00ff00,
+                     0 0 20px #00ff00,
+                     0 0 30px #00ff00,
+                     0 0 40px #00ff00;
+        transform: scale(1.05);  /* Slight grow effect */
+    }
+
+    /* Adjust the sticky navbar hover state */
+    .navbar.navbar-sticky .nav-link:hover {
+        color: #00ff00 !important;  /* Neon green color */
+        text-shadow: 0 0 10px #00ff007b,
+                     0 0 20px #00ff007b,
+                     0 0 30px #00ff007b,
+                     0 0 40px #00ff007b;
+    }
+
+    .navbar-brand:hover {
+        color: var(--primary-color);  /* Keep the hover state as is */
+    }
+
+    .custom-btn {
+        background: var(--primary-color);
+        border-radius: 100px;
+        color: var(--white-color);
+        font-size: 14px;
+        font-weight: 500;
+        padding: 12px 25px;
+        transition: all 0.3s ease;
+    }
+
+    .custom-btn:hover {
+        background: var(--dark-color);
+        color: var(--white-color);
+    }
+
+    @media screen and (max-width: 991px) {
+        .navbar-brand {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .navbar-collapse {
+            background: var(--white-color);
+            border-radius: 10px;
+            margin-top: 15px;
+            padding: 20px;
+        }
+    }
+
+    .navbar-nav {
+        gap: 10px;
+    }
+
+    body {
+        background-color: #000;
+        color: #fff;
+    }
+
+    /* Adjust footer background */
+    .footer {
+        background-color: #000 !important;  /* Override Bootstrap's bg-light */
+        color: #fff;
+    }
+
+    .footer .text-muted {
+        color: #fff !important;
+    }
+    </style>
+    {% endblock %}
+    {% csrf_token %}
 </head>
 <body class="{% if user.is_authenticated %}user-authenticated{% endif %}">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'courts:home' %}">theCourts</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <a href="{% url 'courts:home' %}" class="navbar-brand mx-auto mx-lg-0">theCourts</a>
+
+            <div class="d-flex align-items-center d-lg-none">
+                <i class="navbar-icon bi-telephone-plus me-3"></i>
+                <a class="custom-btn btn" href="tel:+923334965444">
+                    +92-(333) 4965 444
+                </a>
+            </div>
+
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-lg-5">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'courts:home' %}">Home</a>
+                        <a class="nav-link click-scroll" href="#section_1">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'courts:booking' %}">Book Now</a>
+                        <a class="nav-link click-scroll" href="#section_2">About</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'courts:booking_status' %}">Check Booking Status</a>
+                        <a class="nav-link click-scroll" href="#section_3">Courts</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link click-scroll" href="#section_4">Book Now</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link click-scroll" href="#section_5">Check Status</a>
+                    </li>
+                    
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'accounts:profile' %}">Profile</a>
@@ -55,6 +193,11 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a>
                         </li>
+                        {% if user.is_staff %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'courts:admin-dashboard' %}">Admin Dashboard</a>
+                            </li>
+                        {% endif %}
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'accounts:login' %}">Login</a>
@@ -63,14 +206,14 @@
                             <a class="nav-link" href="{% url 'accounts:register' %}">Register</a>
                         </li>
                     {% endif %}
-                    {% if user.is_authenticated and user.is_staff %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'courts:admin-dashboard' %}">
-                                Admin Dashboard
-                            </a>
-                        </li>
-                    {% endif %}
                 </ul>
+
+                <div class="d-lg-flex align-items-center d-none ms-auto">
+                    <i class="navbar-icon bi-telephone-plus me-3"></i>
+                    <a class="custom-btn btn" href="tel:+923334965444">
+                        +92-(333) 4965 444
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -102,7 +245,62 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Custom JS -->
-    {% block extra_js %}{% endblock %}
+    {% block extra_js %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sticky navbar
+        const navbar = document.querySelector('.navbar');
+        
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('navbar-sticky');
+            } else {
+                navbar.classList.remove('navbar-sticky');
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('.click-scroll').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Close mobile menu if open
+                    const navbarCollapse = document.querySelector('.navbar-collapse');
+                    if (navbarCollapse.classList.contains('show')) {
+                        navbarCollapse.classList.remove('show');
+                    }
+                }
+            });
+        });
+    });
+    </script>
+    {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="{% static 'courts/js/jquery.min.js' %}"></script>
+    <script src="{% static 'courts/js/jquery.magnific-popup.min.js' %}"></script>
+    <script>
+    $(document).ready(function() {
+        $('.popup-image').magnificPopup({
+            type: 'image',
+            mainClass: 'mfp-with-zoom',
+            gallery: {
+                enabled: true
+            },
+            zoom: {
+                enabled: true,
+                duration: 300,
+                easing: 'ease-in-out'
+            }
+        });
+    });
+    </script>
 </body>
 </html>

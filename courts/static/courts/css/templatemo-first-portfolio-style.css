@@ -1,0 +1,106 @@
+/*---------------------------------------
+  CUSTOM PROPERTIES ( VARIABLES )             
+-----------------------------------------*/
+:root {
+  --white-color:                  #FFFFFF;
+  --primary-color:               #28a745;
+  --secondary-color:             #6c757d;
+  --section-bg-color:            rgb(54, 52, 67);
+  --dark-color:                  #000000;
+  --p-color:                     #717275;
+  --border-color:                #e9eaeb;
+  --featured-border-color:       #727aab;
+
+  --body-font-family:            'DM Sans', sans-serif;
+
+  --h1-font-size:               62px;
+  --h2-font-size:               48px;
+  --h3-font-size:               32px;
+  --h4-font-size:               28px;
+  --h5-font-size:               24px;
+  --h6-font-size:               22px;
+  --p-font-size:                18px;
+  --menu-font-size:             16px;
+  --copyright-font-size:        14px;
+
+  --border-radius-large:         100px;
+  --border-radius-medium:        20px;
+  --border-radius-small:         10px;
+
+  --font-weight-light:          300;
+  --font-weight-normal:         400;
+  --font-weight-bold:           700;
+}
+
+/* Projects */
+.projects-section {
+    background: var(--section-bg-color);
+    position: relative;
+    overflow: hidden;
+    padding-top: 92px;
+    padding-bottom: 92px;
+}
+
+.projects-thumb {
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    padding: 0;
+    position: relative;
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -o-transform: translateY(0);
+    transform: translateY(0);
+}
+
+.projects-thumb:hover {
+    -webkit-transform: translateY(-10px);
+    -moz-transform: translateY(-10px);
+    -ms-transform: translateY(-10px);
+    -o-transform: translateY(-10px);
+    transform: translateY(-10px);
+}
+
+.projects-thumb a {
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+.projects-thumb .projects-info {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.97) 0%, transparent 100%);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    padding: 30px;
+}
+
+.projects-thumb .projects-title {
+    color: var(--white-color);
+    font-size: var(--h4-font-size);
+}
+
+.projects-thumb .projects-tag {
+    background: var(--primary-color);
+    border-radius: var(--border-radius-large);
+    display: inline-block;
+    font-size: var(--copyright-font-size);
+    color: var(--white-color);
+    padding: 4px 12px;
+    margin-bottom: 5px;
+}
+
+.projects-thumb img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    transition: all 0.3s;
+}
+
+.projects-thumb:hover img {
+    transform: scale(1.2);
+} 

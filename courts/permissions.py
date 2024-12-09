@@ -11,3 +11,20 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         if request.user.is_staff:
             return True
         return obj.user == request.user
+
+class AllowAnyCreateIsAuthenticatedOrReadOnly(permissions.BasePermission):
+    """
+    Allow unauthenticated users to create bookings,
+    but require authentication for other operations.
+    """
+    def has_permission(self, request, view):
+        # Allow unauthenticated users to create bookings
+        if request.method == 'POST':
+            return True
+            
+        # For all other operations, require authentication
+        return bool(
+            request.method in permissions.SAFE_METHODS or
+            request.user and
+            request.user.is_authenticated
+        )

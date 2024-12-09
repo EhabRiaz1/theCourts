@@ -11,9 +11,10 @@ import string
 from decimal import Decimal
 from .models import Court, Booking, UserProfile
 from .serializers import CourtSerializer, BookingSerializer, UserProfileSerializer
-from .permissions import IsAdminOrReadOnly, IsOwnerOrAdmin
+from .permissions import IsAdminOrReadOnly, IsOwnerOrAdmin, AllowAnyCreateIsAuthenticatedOrReadOnly
 from django.contrib.auth.mixins import UserPassesTestMixin
 from .notifications import get_booking_status
+from django.http import JsonResponse
 
 # Template Views
 class HomeView(TemplateView):
@@ -354,11 +355,16 @@ def admin_dashboard(request):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (AllowAnyCreateIsAuthenticatedOrReadOnly,)
 
     def create(self, request, *args, **kwargs):
+        print("=== Booking Creation Debug ===")
+        print("Request method:", request.method)
+        print("Request user:", request.user)
+        print("Request auth:", request.auth)
+        print("Request headers:", request.headers)
         print("Request data:", request.data)
-        print("User authenticated:", request.user.is_authenticated)
+        print("===========================")
         
         data = request.data.copy()
         
@@ -456,12 +462,23 @@ class BookingViewSet(viewsets.ModelViewSet):
 class BookingStatusView(TemplateView):
     template_name = 'courts/booking_status.html'
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        reference = self.request.GET.get('reference')
+    def get(self, request, *args, **kwargs):
+        reference = request.GET.get('reference')
         
+        # If it's an AJAX request, return JSON
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if not reference:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Reference number is required'
+                })
+            
+            result = get_booking_status(reference)
+            return JsonResponse(result, safe=False)
+            
+        # For regular requests, render the template
+        context = self.get_context_data(**kwargs)
         if reference:
             context['result'] = get_booking_status(reference)
             context['reference'] = reference
-            
-        return context
+        return self.render_to_response(context)

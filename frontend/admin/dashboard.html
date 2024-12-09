@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - The Courts</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .booking-card {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .booking-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+        }
+
+        .status-pending {
+            background: #ffd700;
+            color: black;
+        }
+
+        .status-approved {
+            background: #90EE90;
+            color: black;
+        }
+
+        .status-rejected {
+            background: #FFB6C1;
+            color: black;
+        }
+
+        .action-buttons button {
+            margin: 0 5px;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        #bookingsList {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            background: #90EE90;
+            color: black;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Admin Dashboard</h2>
+        
+        <div class="notification" id="notification"></div>
+
+        <div class="filters">
+            <div class="row">
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="courtFilter">
+                        <option value="">All Courts</option>
+                        <option value="pickleball">Pickleball</option>
+                        <option value="padel">Padel</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" id="dateFilter">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-secondary" onclick="resetFilters()">Reset Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="bookingsList"></div>
+    </div>
+
+    <script>
+        let ws;
+        let bookings = [];
+
+        // Connect to WebSocket
+        function connectWebSocket() {
+            const token = localStorage.getItem('adminToken');
+            if (!token) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            ws = new WebSocket(`ws://localhost:8000/ws/admin?token=${token}`);
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'new_booking') {
+                    showNotification('New booking received!');
+                    fetchBookings();
+                }
+            };
+
+            ws.onclose = () => {
+                setTimeout(connectWebSocket, 1000);
+            };
+        }
+
+        // Fetch all bookings
+        async function fetchBookings() {
+            try {
+                const token = localStorage.getItem('adminToken');
+                const response = await fetch('http://localhost:8000/bookings/admin/bookings', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    bookings = await response.json();
+                    applyFilters();
+                } else {
+                    throw new Error('Failed to fetch bookings');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Update booking status
+        async function updateStatus(bookingId, status) {
+            try {
+                const token = localStorage.getItem('adminToken');
+                const response = await fetch(`http://localhost:8000/bookings/${bookingId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status })
+                });
+
+                if (response.ok) {
+                    showNotification(`Booking ${status} successfully`);
+                    fetchBookings();
+                } else {
+                    throw new Error('Failed to update status');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Apply filters to bookings
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const courtFilter = document.getElementById('courtFilter').value;
+            const dateFilter = document.getElementById('dateFilter').value;
+
+            let filteredBookings = bookings;
+
+            if (statusFilter) {
+                filteredBookings = filteredBookings.filter(b => b.status === statusFilter);
+            }
+            if (courtFilter) {
+                filteredBookings = filteredBookings.filter(b => b.court_type === courtFilter);
+            }
+            if (dateFilter) {
+                filteredBookings = filteredBookings.filter(b => b.booking_date.startsWith(dateFilter));
+            }
+
+            displayBookings(filteredBookings);
+        }
+
+        // Display bookings in the list
+        function displayBookings(bookingsToShow) {
+            const bookingsList = document.getElementById('bookingsList');
+            bookingsList.innerHTML = '';
+
+            bookingsToShow.forEach(booking => {
+                const card = document.createElement('div');
+                card.className = 'booking-card';
+                card.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>User:</strong> ${booking.user_name}<br>
+                            <strong>Email:</strong> ${booking.user_email}
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Court:</strong> ${booking.court_type}<br>
+                            <strong>Duration:</strong> ${booking.duration} minutes
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Date:</strong> ${new Date(booking.booking_date).toLocaleDateString()}<br>
+                            <strong>Time:</strong> ${booking.booking_time}
+                        </div>
+                        <div class="col-md-3">
+                            <span class="status-badge status-${booking.status}">${booking.status}</span>
+                            ${booking.status === 'pending' ? `
+                                <div class="action-buttons mt-2">
+                                    <button class="btn btn-sm btn-success" onclick="updateStatus(${booking.id}, 'approved')">
+                                        Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="updateStatus(${booking.id}, 'rejected')">
+                                        Reject
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                bookingsList.appendChild(card);
+            });
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('courtFilter').value = '';
+            document.getElementById('dateFilter').value = '';
+            applyFilters();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            connectWebSocket();
+            fetchBookings();
+            
+            // Add filter change listeners
+            document.getElementById('statusFilter').addEventListener('change', applyFilters);
+            document.getElementById('courtFilter').addEventListener('change', applyFilters);
+            document.getElementById('dateFilter').addEventListener('change', applyFilters);
+        });
+    </script>
+</body>
+</html> 

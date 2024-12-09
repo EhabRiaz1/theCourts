@@ -37,6 +37,11 @@ class BookingHistoryView(ManagementLoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = Booking.objects.all().order_by('-created_at')
         
+        # Filter by reference if provided
+        reference = self.request.GET.get('reference')
+        if reference:
+            queryset = queryset.filter(booking_reference__icontains=reference)
+        
         # Filter by status if provided
         status = self.request.GET.get('status')
         if status:

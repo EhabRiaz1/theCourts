@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <meta name="description" content="">
+        <meta name="Ehabb" content="The Courts">
+
+        <title>The Courts</title>
+
+        <!-- CSS FILES -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="css/bootstrap-icons.css" rel="stylesheet">
+
+        <link href="css/magnific-popup.css" rel="stylesheet">
+
+        <link href="css/templatemo-first-portfolio-style.css" rel="stylesheet">
+        
+        <style>
+            .hero-image {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+
+            .feature-module {
+                background: rgb(54, 52, 67);
+                border-radius: 15px;
+                padding: 25px;
+                margin: 15px 0;
+                transition: all 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                height: 100%;
+            }
+
+            .feature-module:hover {
+                transform: scale(1.02);
+                background: rgba(208, 224, 247, 0.1);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+
+            .feature-module h4 {
+                color: rgb(208, 224, 247);
+                font-weight: 700;
+                margin-bottom: 15px;
+                font-size: 1.5rem;
+            }
+
+            .feature-module li {
+                font-size: 1.1rem;
+                font-weight: 500;
+                color: #ffffff;
+            }
+
+            .feature-module.large {
+                min-height: 250px;
+            }
+
+            .feature-module.medium {
+                min-height: 200px;
+            }
+
+            .feature-module.small {
+                min-height: 150px;
+            }
+
+            .booking-container {
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                padding: 30px;
+                background: rgb(54, 52, 67);
+            }
+
+            .booking-tabs {
+                display: flex;
+                justify-content: space-between;
+                margin: 0 auto;
+                width: 100%;
+                max-width: 600px;
+                margin-bottom: 30px;
+            }
+
+            .tab-button {
+                flex: 1;
+                margin: 0 10px;
+                padding: 15px 30px;
+                border: none;
+                border-radius: 5px;
+                background: rgba(255, 255, 255, 0.1);
+                color: black;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                font-size: 1.1rem;
+                font-weight: 500;
+            }
+
+            .tab-button:hover {
+                transform: scale(1.05);
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            .tab-button.active {
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .booking-step {
+                text-align: center;
+                max-width: 400px;
+                margin: 0 auto 20px;
+            }
+
+            .booking-step h4 {
+                margin-bottom: 15px;
+                color: black;
+            }
+
+            #proceedButton {
+                background: rgba(255, 255, 255, 0.2);
+                color: black;
+                padding: 12px 30px;
+                border: none;
+                border-radius: 5px;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            #proceedButton:hover {
+                transform: scale(1.05);
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .form-floating {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .hidden {
+                display: none;
+            }
+
+            .button-container {
+                margin-top: 30px;
+            }
+
+            .duration-selector {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 15px;
+                padding: 20px;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .duration-display {
+                text-align: center;
+                margin-bottom: 15px;
+                padding: 15px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+            }
+
+            .duration-display span {
+                display: block;
+                color: black;
+                font-weight: 500;
+            }
+
+            #durationValue {
+                font-size: 1.4rem;
+                margin-bottom: 5px;
+            }
+
+            #priceValue {
+                font-size: 1.2rem;
+                color: rgba(0, 0, 0, 0.8);
+            }
+
+            .duration-controls {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .duration-btn {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(255, 255, 255, 0.2);
+                color: black;
+                font-size: 1.5rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .duration-btn:hover {
+                transform: scale(1.1);
+                background: rgba(255, 255, 255, 0.3);
+            }
+
+            .duration-btn:active {
+                transform: scale(0.95);
+            }
+
+            .duration-btn.disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+            .duration-btn.disabled:hover {
+                transform: none;
+                background: rgba(255, 255, 255, 0.2);
+            }
+        </style>
+    </head>
+    
+    <body>
+
+        <section class="preloader">
+            <div class="spinner">
+                <span class="spinner-rotate"></span>    
+            </div>
+        </section>
+
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <a href="index.html" class="navbar-brand mx-auto mx-lg-0">theCourts</a>
+
+                <div class="d-flex align-items-center d-lg-none">
+                    <i class="navbar-icon bi-telephone-plus me-3"></i>
+                    <a class="custom-btn btn" href="#section_4">
+                        Book Now"
+                    </a>
+                </div>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_1">Home</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_2">About</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_3">Courts</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_4">Book</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-lg-flex align-items-center d-none ms-auto">
+                        <i class="navbar-icon bi-telephone-plus me-3"></i>
+                        <a class="custom-btn btn" href="#section_4">
+                            +92-(333) 4965 444
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </nav>
+
+        <main>
+
+            <section class="hero d-flex justify-content-center align-items-center" id="section_1">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-lg-7 col-12">
+                            <div class="hero-text">
+                                <h2 class="mb-4">The best courts in Lahore</h2>
+                                <p class="mb-4"><a class="custom-btn btn custom-link" href="#section_2">Let's begin</a></p>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-5 col-12 position-relative d-flex justify-content-center align-items-center" style="min-height: 400px;">
+                            <img src="images/portrait-happy-excited-man-holding-laptop-computer.png" class="hero-image img-fluid" style="width: 120%; height: auto; margin-top: -40px;" alt="">
+                        </div>
+
+                    </div>
+                </div>
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+                    <path fill="rgb(54, 52, 67)" fill-opacity="1" d="M0,160L24,160C48,160,96,160,144,138.7C192,117,240,75,288,64C336,53,384,75,432,106.7C480,139,528,181,576,208C624,235,672,245,720,240C768,235,816,213,864,186.7C912,160,960,128,1008,133.3C1056,139,1104,181,1152,202.7C1200,224,1248,224,1296,197.3C1344,171,1392,117,1416,90.7L1440,64L1440,0L1416,0C1392,0,1344,0,1296,0C1248,0,1200,0,1152,0C1104,0,1056,0,1008,0C960,0,912,0,864,0C816,0,768,0,720,0C672,0,624,0,576,0C528,0,480,0,432,0C384,0,336,0,288,0C240,0,192,0,144,0C96,0,48,0,24,0L0,0Z"></path>
+                </svg>
+            </section>
+
+
+            <section class="about section-padding" id="section_2">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-12">
+                            <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4" style="background: none;">
+                                <img src="images/the-courts-logo.png" 
+                                     class="img-fluid" 
+                                     alt="The Courts Logo" 
+                                     style="max-width: 600px; 
+                                            border-radius: 25px;
+                                            border: 3px solid rgb(208, 224, 247);
+                                            padding: 15px;">
+                            </div>
+
+                            <div class="container-fluid">
+                                <div class="row g-4">
+                                    <div class="col-12">
+                                        <div class="feature-module large">
+                                            <h3 class="pt-2 mb-3">Premium Sports Experience</h3>
+                                            <p>Located in the prime location of Gulberg, Lahore, The Courts offers a premium playing experience for both Padel and Pickleball enthusiasts.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="feature-module medium">
+                                            <h4>Lahore's First</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>Proud home to Lahore's first Pickle Ball court</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="feature-module medium">
+                                            <h4>Superior Playing Surface</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>Engineered for optimal grip and ball bounce</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="feature-module large">
+                                            <h4>Advanced Lighting</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>High-intensity LED lighting for perfect day and night play</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="feature-module small">
+                                            <h4>Professional Equipment</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>Professional-Rated Padel Rackets</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="feature-module small">
+                                            <h4>Premium Paddles</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>High-Performance Pickleball Paddles</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="feature-module small">
+                                            <h4>Quality Assured</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>Premium-grade court structure</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="feature-module medium">
+                                            <h4>Experience Excellence</h4>
+                                            <p>Experience the perfect blend of sport and luxury at The Courts. Whether you're a beginner or an advanced player, our facilities are designed to elevate your game.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="feature-module medium">
+                                            <h4>Book Now</h4>
+                                            <ul class="list-unstyled">
+                                                <li><i class="bi bi-check-circle me-2"></i>Easy online booking available</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="projects section-padding" id="section_3">
+                <div class="container">
+                    <div class="row justify-content-center">
+
+                        <div class="col-lg-8 col-md-8 col-12">
+                            <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
+                                <img src="images/white-desk-work-study-aesthetics.jpg" class="avatar-image img-fluid" alt="">
+
+                                <h2 class="text-white ms-4 mb-0">Courts Av</h2>
+                            </div>
+                        </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
+                            <div class="projects-thumb">
+                                <div class="projects-info">
+                                    <small class="projects-tag">Court</small>
+
+                                    <h3 class="projects-title">Paddle Ball Court</h3>
+                                </div>
+
+                                <a href="images/projects/the-5th-IQYR7N67dhM-unsplash.jpg" class="popup-image">
+                                    <img src="images/projects/the-5th-IQYR7N67dhM-unsplash.jpg" class="projects-image img-fluid" alt="">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
+                            <div class="projects-thumb">
+                                <div class="projects-info">
+                                    <small class="projects-tag">Court</small>
+
+                                    <h3 class="projects-title">Pickle Ball Court</h3>
+                                </div>
+
+                                <a href="images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg" class="popup-image">
+                                    <img src="images/projects/true-agency-9Bjog5FZ-oc-unsplash.jpg" class="projects-image img-fluid" alt="">
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <section class="booking-section section-padding" id="section_4">
+                <div class="container">
+                    <div class="booking-container" style="background: rgb(204, 228, 75);">
+                        <!-- Booking Tabs -->
+                        <div class="booking-tabs">
+                            <button class="tab-button active" data-court="pickleball">Pickle Ball</button>
+                            <button class="tab-button" data-court="padel">Padel Ball</button>
+                        </div>
+
+                        <!-- Booking Form Container -->
+                        <div class="booking-form-container">
+                            <form action="javascript:void(0);" method="post" class="booking-form text-center" id="bookingForm">
+                                <!-- Step 1: Duration Selection -->
+                                <div class="booking-step" id="durationStep">
+                                    <h4>Select Duration</h4>
+                                    <div class="duration-selector">
+                                        <div class="duration-display">
+                                            <span id="durationValue">1 hour</span>
+                                            <span id="priceValue">PKR 6,000</span>
+                                        </div>
+                                        <div class="duration-controls">
+                                            <button type="button" class="duration-btn minus" id="decreaseDuration">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <button type="button" class="duration-btn plus" id="increaseDuration">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="duration" name="duration" value="60">
+                                </div>
+
+                                <!-- Step 2: Date Selection (Initially Hidden) -->
+                                <div class="booking-step hidden" id="dateStep">
+                                    <h4>Select Date</h4>
+                                    <div class="form-floating">
+                                        <input type="date" class="form-control" id="bookingDate" name="bookingDate" required>
+                                        <label for="bookingDate">Select Date</label>
+                                    </div>
+                                </div>
+
+                                <!-- Step 3: Time Selection (Initially Hidden) -->
+                                <div class="booking-step hidden" id="timeStep">
+                                    <h4>Select Time</h4>
+                                    <div class="form-floating">
+                                        <select class="form-control" id="timeSlot" name="timeSlot" required>
+                                            <option value="">Available time slots will appear here</option>
+                                        </select>
+                                        <label for="timeSlot">Available Time Slots</label>
+                                    </div>
+                                </div>
+
+                                <div class="button-container">
+                                    <button type="button" 
+                                            id="proceedButton" 
+                                            class="form-control" 
+                                            onclick="handleProceed(event)">Proceed to Details</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-12 col-12">
+                        <div class="copyright-text-wrap">
+                            <p class="mb-0">
+                                <span class="copyright-text">Copyright © 2024 <a href="#">The Courts - Lahore</a> PVT. LTD. Company All rights reserved.</span>
+                                Instagram: 
+                                <a rel="sponsored" href="https://instagram.com/thecourtslahore" target="_blank">thecourtslahore</a>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+
+        <!-- JAVASCRIPT FILES -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.sticky.js"></script>
+        <script src="js/click-scroll.js"></script>
+        <script src="js/jquery.magnific-popup.min.js"></script>
+        <script src="js/magnific-popup-options.js"></script>
+        <script src="js/custom.js"></script>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-button');
+            const durationStep = document.getElementById('durationStep');
+            const dateStep = document.getElementById('dateStep');
+            const timeStep = document.getElementById('timeStep');
+            const proceedButton = document.getElementById('proceedButton');
+            
+            let selectedCourt = 'pickleball';
+            let pricePerHalfHour = 3000; // Default for pickleball
+
+            // Tab switching
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    selectedCourt = tab.dataset.court;
+                    pricePerHalfHour = selectedCourt === 'pickleball' ? 3000 : 4000;
+                    updateDurationDisplay();
+                    resetForm();
+                });
+            });
+
+            const increaseDuration = document.getElementById('increaseDuration');
+            const decreaseDuration = document.getElementById('decreaseDuration');
+            const durationValue = document.getElementById('durationValue');
+            const priceValue = document.getElementById('priceValue');
+            const durationInput = document.getElementById('duration');
+
+            let currentDuration = 60; // Starting with 1 hour
+            const minDuration = 60; // Minimum 1 hour
+            const maxDuration = 1260; // Maximum 21 hours (3am next day)
+            
+            function updateDurationDisplay() {
+                const hours = currentDuration / 60;
+                const price = (currentDuration / 30) * pricePerHalfHour;
+                
+                durationValue.textContent = hours === 1 
+                    ? '1 hour' 
+                    : hours % 1 === 0 
+                        ? `${hours} hours` 
+                        : `${hours.toFixed(1)} hours`;
+                
+                priceValue.textContent = `PKR ${price.toLocaleString()}`;
+                durationInput.value = currentDuration;
+
+                // Disable buttons at limits
+                decreaseDuration.classList.toggle('disabled', currentDuration <= minDuration);
+                increaseDuration.classList.toggle('disabled', currentDuration >= maxDuration);
+            }
+
+            increaseDuration.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentDuration < maxDuration) {
+                    currentDuration += 30;
+                    updateDurationDisplay();
+                }
+            });
+
+            decreaseDuration.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentDuration > minDuration) {
+                    currentDuration -= 30;
+                    updateDurationDisplay();
+                }
+            });
+
+            // Add a confirm duration button
+            const confirmDurationBtn = document.createElement('button');
+            confirmDurationBtn.type = 'button';
+            confirmDurationBtn.className = 'form-control mt-3';
+            confirmDurationBtn.id = 'confirmDuration';
+            confirmDurationBtn.textContent = 'Confirm Duration';
+            confirmDurationBtn.style.maxWidth = '400px';
+            confirmDurationBtn.style.margin = '20px auto 0';
+            
+            // Add the same styling as proceedButton
+            confirmDurationBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+            confirmDurationBtn.style.color = 'black';
+            confirmDurationBtn.style.padding = '12px 30px';
+            confirmDurationBtn.style.border = 'none';
+            confirmDurationBtn.style.borderRadius = '5px';
+            confirmDurationBtn.style.fontWeight = '500';
+            confirmDurationBtn.style.transition = 'all 0.3s ease';
+
+            // Add hover effect
+            confirmDurationBtn.addEventListener('mouseover', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.background = 'rgba(255, 255, 255, 0.3)';
+            });
+
+            confirmDurationBtn.addEventListener('mouseout', function() {
+                this.style.transform = 'scale(1)';
+                this.style.background = 'rgba(255, 255, 255, 0.2)';
+            });
+
+            // Add the button to the duration step
+            document.getElementById('durationStep').appendChild(confirmDurationBtn);
+
+            // Handle confirm duration click
+            confirmDurationBtn.addEventListener('click', function() {
+                // Disable duration controls
+                increaseDuration.disabled = true;
+                decreaseDuration.disabled = true;
+                confirmDurationBtn.disabled = true;
+                
+                // Show the date selection step
+                dateStep.classList.remove('hidden');
+                
+                // Scroll to the date selection
+                dateStep.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Date selection
+            document.getElementById('bookingDate').addEventListener('change', function() {
+                if (this.value) {
+                    generateTimeSlots();
+                    timeStep.classList.remove('hidden');
+                } else {
+                    timeStep.classList.add('hidden');
+                }
+            });
+
+            function generateTimeSlots() {
+                const timeSlotSelect = document.getElementById('timeSlot');
+                const selectedDate = document.getElementById('bookingDate').value;
+                const duration = parseInt(document.getElementById('duration').value);
+                
+                timeSlotSelect.innerHTML = '<option value="">Select time</option>';
+                
+                // In a real application, you would check these against your backend
+                const startTime = 6; // 6 AM
+                const endTime = 27; // 3 AM next day (27 in 24-hour format)
+
+                for (let hour = startTime; hour < endTime; hour++) {
+                    for (let minutes = 0; minutes < 60; minutes += 30) {
+                        const displayHour = hour % 24;
+                        const timeString = `${displayHour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                        timeSlotSelect.add(new Option(timeString, timeString));
+                    }
+                }
+            }
+
+            function resetForm() {
+                currentDuration = 60;
+                updateDurationDisplay();
+                document.getElementById('bookingDate').value = '';
+                document.getElementById('timeSlot').value = '';
+                dateStep.classList.add('hidden');
+                timeStep.classList.add('hidden');
+                increaseDuration.disabled = false;
+                decreaseDuration.disabled = false;
+                if (confirmDurationBtn) confirmDurationBtn.disabled = false;
+            }
+
+            // Initialize display
+            updateDurationDisplay();
+
+            // Handle proceed button click
+            proceedButton.addEventListener('click', function(event) {
+                // Prevent form submission
+                event.preventDefault();
+                
+                // Get selected values
+                const selectedDate = document.getElementById('bookingDate').value;
+                const selectedTime = document.getElementById('timeSlot').value;
+                
+                // Validate selections
+                if (!selectedDate) {
+                    alert('Please select a date');
+                    return;
+                }
+                if (!selectedTime) {
+                    alert('Please select a time slot');
+                    return;
+                }
+
+                // Create booking data object
+                const bookingData = {
+                    court: selectedCourt,
+                    duration: currentDuration,
+                    date: selectedDate,
+                    time: selectedTime,
+                    price: (currentDuration / 30) * pricePerHalfHour
+                };
+
+                // Store booking data in localStorage for the next page
+                localStorage.setItem('pendingBooking', JSON.stringify(bookingData));
+
+                // Redirect to booking details page
+                window.location.href = 'booking-details.html';
+            });
+        });
+        </script>
+
+    </body>
+</html>

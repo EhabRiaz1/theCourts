@@ -2,61 +2,232 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">Check Booking Status</h4>
-                </div>
-                <div class="card-body">
-                    <form method="get" class="mb-4">
-                        <div class="input-group">
-                            <input type="text" 
-                                   name="reference" 
-                                   class="form-control" 
-                                   placeholder="Enter your booking reference number"
-                                   value="{{ reference|default:'' }}"
-                                   required>
-                            <button type="submit" class="btn btn-primary">Check Status</button>
-                        </div>
-                    </form>
-
-                    {% if result %}
-                        {% if result.status == 'success' %}
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Booking Details</h5>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <p><strong>Reference:</strong> {{ result.data.reference }}</p>
-                                            <p><strong>Guest Name:</strong> {{ result.data.guest_name }}</p>
-                                            <p><strong>Court:</strong> {{ result.data.court }}</p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <p><strong>Date:</strong> {{ result.data.date }}</p>
-                                            <p><strong>Time:</strong> {{ result.data.time }}</p>
-                                            <p>
-                                                <strong>Status:</strong> 
-                                                <span class="badge bg-{% if result.data.status == 'Pending' %}warning
-                                                                    {% elif result.data.status == 'Approved' %}success
-                                                                    {% elif result.data.status == 'Rejected' %}danger
-                                                                    {% else %}secondary{% endif %}">
-                                                    {{ result.data.status }}
-                                                </span>
-                                            </p>
-                                        </div>
+    <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+        <div class="card-body text-center">
+            <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold;">Check Booking Status</h3>
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="frosted-card">
+                        <div class="card-body p-4">
+                            <form method="get" class="status-form">
+                                <div class="input-container">
+                                    <div class="mb-3">
+                                        <label class="form-label">Booking Reference</label>
+                                        <input type="text" 
+                                               name="reference" 
+                                               class="form-control frosted-input" 
+                                               placeholder="Enter your booking reference number"
+                                               value="{{ reference|default:'' }}"
+                                               required>
                                     </div>
                                 </div>
-                            </div>
-                        {% else %}
-                            <div class="alert alert-danger">
-                                {{ result.message }}
-                            </div>
-                        {% endif %}
-                    {% endif %}
+                                <div class="buttons-container">
+                                    <button type="submit" class="confirm-btn">Check Status</button>
+                                </div>
+                            </form>
+
+                            {% if result %}
+                                {% if result.status == 'success' %}
+                                    <div class="frosted-card mt-4">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title mb-4">Booking Details</h5>
+                                            <div class="booking-details">
+                                                <p><strong>Reference:</strong> {{ result.data.reference }}</p>
+                                                <p><strong>Guest Name:</strong> {{ result.data.guest_name }}</p>
+                                                <p><strong>Date:</strong> {{ result.data.date }}</p>
+                                                <p><strong>Time:</strong> {{ result.data.time }}</p>
+                                                <p>
+                                                    <strong>Status:</strong> 
+                                                    <span class="custom-badge bg-{% if result.data.status == 'Pending' %}warning
+                                                                            {% elif result.data.status == 'Approved' %}success
+                                                                            {% elif result.data.status == 'Rejected' %}danger
+                                                                            {% else %}secondary{% endif %}">
+                                                        {{ result.data.status }}
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger mt-4">
+                                        {{ result.message }}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Reuse existing styles from login.html */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container.py-5 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 3rem !important;
+        width: 148%;
+        max-width: 148%;
+        margin: 0 auto;
+        min-height: calc(100vh - 76px);
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Frosted card styles */
+    .frosted-card {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 30px 50px;
+        color: #000;
+    }
+
+    /* Status form specific styles */
+    .status-form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    /* Custom badge styling */
+    .custom-badge {
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 14px;
+        color: white;
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+    }
+
+    .bg-success {
+        background-color: #198754 !important;
+    }
+
+    .bg-danger {
+        background-color: #dc3545 !important;
+    }
+
+    .bg-secondary {
+        background-color: #6c757d !important;
+    }
+
+    /* Reuse other styles from login.html */
+    .input-container, .buttons-container, .frosted-input, .confirm-btn, .form-label {
+        /* These styles are the same as in login.html */
+    }
+
+    /* Input field styles */
+    .frosted-input {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 25px !important;
+        padding: 10px 15px !important;
+        font-size: 16px !important;
+        color: #000 !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        height: 45px;
+        line-height: 1.5;
+        width: 100% !important;
+    }
+
+    /* Button styles */
+    .confirm-btn {
+        padding: 10px 25px;
+        border-radius: 25px;
+        border: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+
+    .confirm-btn:hover {
+        background: rgba(0, 0, 0, 1);
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Form text color */
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000000;
+        margin-bottom: 5px;
+        text-align: left;
+        display: block;
+        width: 100%;
+    }
+
+    @media (max-width: 768px) {
+        .container.py-5 {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .frosted-card {
+            padding: 20px;
+        }
+        
+        .input-container .mb-3 {
+            max-width: 100%;
+        }
+        
+        .buttons-container {
+            flex-direction: row;
+            gap: 10px;
+        }
+    }
+
+    /* Add these new styles */
+    .booking-details {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .booking-details p {
+        margin: 0;
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        width: fit-content;
+        min-width: 250px;
+    }
+</style>
 {% endblock %} 

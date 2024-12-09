@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - The Courts</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #1a1a1a;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .booking-container {
+            width: 95%;
+            max-width: 1200px;
+            padding: 40px;
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 25px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.1);
+        }
+
+        h1, h2 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .booking-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            justify-content: center;
+            margin: 30px 0;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px 30px;
+            border-radius: 15px;
+            width: calc(20% - 25px);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .detail-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+
+        .detail-item strong {
+            color: #00ffff;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1em;
+        }
+
+        .form-section {
+            display: flex;
+            gap: 50px;
+            margin: 40px 0;
+            align-items: center;
+        }
+
+        .form-left {
+            flex: 3;
+        }
+
+        .form-right {
+            flex: 1;
+            align-self: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 30px;
+            background: #00ffff;
+            color: #000;
+            transition: all 0.3s ease;
+        }
+
+        .form-control::placeholder {
+            color: #000;
+        }
+
+        .booking-total {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            height: fit-content;
+        }
+
+        .booking-total h3 {
+            color: #fff;
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .booking-total h2 {
+            margin: 10px 0 0 0;
+            font-size: 1.8em;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #00ff00;
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #ff0000;
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="booking-container">
+        <h1>Booking Details</h1>
+        
+        <div id="bookingInfo" class="booking-summary">
+            <div class="booking-details">
+                <div class="detail-item">
+                    <strong>Court</strong>
+                    <span>pickleball</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Duration</strong>
+                    <span>90 minutes</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Date</strong>
+                    <span>2024-11-14</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Time</strong>
+                    <span>07:30</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Price</strong>
+                    <span>PKR 9000</span>
+                </div>
+            </div>
+        </div>
+
+        <h2>Customer Information</h2>
+        <div class="form-section">
+            <div class="form-left">
+                <form id="customerForm">
+                    <div class="form-group">
+                        <input type="text" 
+                               id="customerName"
+                               class="form-control" 
+                               placeholder="Full Name" 
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" 
+                               id="customerEmail"
+                               class="form-control" 
+                               placeholder="Email" 
+                               required>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" 
+                               id="customerPhone"
+                               class="form-control" 
+                               placeholder="Phone Number" 
+                               required>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="form-right">
+                <div class="booking-total">
+                    <h3>Total Amount</h3>
+                    <h2>PKR 9000</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button type="submit" 
+                    form="customerForm" 
+                    class="btn btn-primary" 
+                    onclick="handleSubmit(event)">PROCEED TO PAYMENT</button>
+            <button type="button" 
+                    class="btn btn-danger" 
+                    onclick="window.location.href='index.html'">CANCEL / RETURN TO HOME</button>
+        </div>
+    </div>
+
+    <script>
+        function generateBookingReference() {
+            return 'BK-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const customerDetails = {
+                name: document.getElementById('customerName').value,
+                email: document.getElementById('customerEmail').value,
+                phone: document.getElementById('customerPhone').value
+            };
+
+            if (!customerDetails.name || !customerDetails.email || !customerDetails.phone) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const bookingData = JSON.parse(localStorage.getItem('pendingBooking'));
+                
+                const finalBooking = {
+                    ...bookingData,
+                    ...customerDetails,
+                    bookingReference: generateBookingReference(),
+                    bookingDate: new Date().toISOString(),
+                    status: 'pending_payment'
+                };
+
+                localStorage.setItem('currentBooking', JSON.stringify(finalBooking));
+
+                window.location.href = 'booking-confirmation.html';
+            } catch (error) {
+                console.error('Error processing booking:', error);
+                alert('An error occurred. Please try again.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const bookingData = JSON.parse(localStorage.getItem('pendingBooking'));
+                console.log('Retrieved booking data:', bookingData);
+                
+                if (!bookingData) {
+                    console.log('No booking data found, redirecting to home...');
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                document.getElementById('bookingInfo').innerHTML = `
+                    <h2>Selected Details</h2>
+                    <div class="booking-details">
+                        <div class="detail-item">
+                            <strong>Court</strong><br>${bookingData.court}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Duration</strong><br>${bookingData.duration} minutes
+                        </div>
+                        <div class="detail-item">
+                            <strong>Date</strong><br>${bookingData.date}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Time</strong><br>${bookingData.time}
+                        </div>
+                        <div class="detail-item">
+                            <strong>Price</strong><br>PKR ${bookingData.price}
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('totalAmount').textContent = bookingData.price;
+            } catch (error) {
+                console.error('Error loading booking details:', error);
+            }
+        });
+    </script>
+</body>
+</html> 

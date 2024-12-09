@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard - The Courts</title>
+
+    <!-- CSS imports -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/templatemo-first-portfolio-style.css" rel="stylesheet">
+    
+    <style>
+        .admin-container {
+            padding: 30px;
+            background: rgb(54, 52, 67);
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .nav-tabs .nav-link {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: rgba(208, 224, 247, 0.1);
+            border-radius: 5px 5px 0 0;
+        }
+
+        .booking-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .booking-card .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .status-pending {
+            background: #ffd60a;
+            color: black;
+        }
+
+        .status-approved {
+            background: #72b01d;
+            color: white;
+        }
+
+        .status-rejected {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .calendar-view {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container">
+            <button class="btn btn-danger logout-btn" onclick="logout()">Logout</button>
+            
+            <div class="admin-container">
+                <ul class="nav nav-tabs" id="adminTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#pendingBookings">Pending Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#allBookings">All Bookings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#calendar">Calendar View</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- Pending Bookings Tab -->
+                    <div class="tab-pane fade show active" id="pendingBookings">
+                        <div id="pendingBookingsList">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- All Bookings Tab -->
+                    <div class="tab-pane fade" id="allBookings">
+                        <div id="allBookingsList">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Calendar View Tab -->
+                    <div class="tab-pane fade" id="calendar">
+                        <div class="calendar-view">
+                            <h4>Calendar View</h4>
+                            <!-- Calendar implementation would go here -->
+                            <p>Calendar view to be implemented</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check admin session
+        if (!sessionStorage.getItem('adminLoggedIn')) {
+            window.location.href = 'admin-login.html';
+        }
+
+        // Sample booking data (In a real application, this would come from your backend)
+        const bookings = [
+            {
+                id: 1,
+                bookingReference: 'PB-123456-ABC',
+                name: 'John Doe',
+                email: 'john@example.com',
+                phone: '1234567890',
+                court: 'pickleball',
+                duration: '60',
+                date: '2024-03-20',
+                time: '14:00',
+                status: 'pending',
+                totalPrice: 6000
+            },
+            // Add more sample bookings as needed
+        ];
+
+        function createBookingCard(booking) {
+            return `
+                <div class="booking-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5>${booking.bookingReference}</h5>
+                        <span class="status status-${booking.status}">${booking.status}</span>
+                    </div>
+                    <div class="booking-details">
+                        <p><strong>Name:</strong> ${booking.name}</p>
+                        <p><strong>Court:</strong> ${booking.court}</p>
+                        <p><strong>Date:</strong> ${booking.date}</p>
+                        <p><strong>Time:</strong> ${booking.time}</p>
+                        <p><strong>Duration:</strong> ${parseInt(booking.duration)/60} hour(s)</p>
+                        <p><strong>Price:</strong> PKR ${booking.totalPrice.toLocaleString()}</p>
+                    </div>
+                    ${booking.status === 'pending' ? `
+                        <div class="action-buttons">
+                            <button class="btn btn-success" onclick="updateBookingStatus(${booking.id}, 'approved')">
+                                Approve
+                            </button>
+                            <button class="btn btn-danger" onclick="updateBookingStatus(${booking.id}, 'rejected')">
+                                Reject
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function updateBookingStatus(bookingId, status) {
+            // In a real application, this would make an API call to your backend
+            console.log(`Updating booking ${bookingId} to ${status}`);
+            alert(`Booking ${status}`);
+            // Refresh the bookings list
+            loadBookings();
+        }
+
+        function loadBookings() {
+            const pendingBookings = bookings.filter(b => b.status === 'pending');
+            document.getElementById('pendingBookingsList').innerHTML = 
+                pendingBookings.map(createBookingCard).join('') || '<p>No pending bookings</p>';
+
+            document.getElementById('allBookingsList').innerHTML = 
+                bookings.map(createBookingCard).join('') || '<p>No bookings found</p>';
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            window.location.href = 'admin-login.html';
+        }
+
+        // Initial load
+        loadBookings();
+    </script>
+</body>
+</html> 

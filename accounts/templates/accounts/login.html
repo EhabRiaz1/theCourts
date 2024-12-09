@@ -1,27 +1,183 @@
 {% extends 'courts/base.html' %}
 {% load static %}
+{% load form_tags %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="text-center">Login</h4>
-                </div>
-                <div class="card-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary w-100">Login</button>
-                    </form>
-                </div>
-                <div class="card-footer text-center">
-                    <p class="mb-0">Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a></p>
-                    <p class="mt-2 mb-0">Want to book without an account? <a href="{% url 'courts:booking' %}">Book as Guest</a></p>
+<div class="container py-5">
+    <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+        <div class="card-body text-center">
+            <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold;">Login</h3>
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div class="frosted-card">
+                        <div class="card-body p-4">
+                            <form method="post" class="login-form">
+                                {% csrf_token %}
+                                <div class="input-container">
+                                    {% for field in form %}
+                                    <div class="mb-3">
+                                        <label class="form-label">{{ field.label }}</label>
+                                        {{ field|addclass:"form-control frosted-input" }}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="buttons-container mt-4">
+                                    <button type="submit" class="confirm-btn">Login</button>
+                                    <a href="{% url 'accounts:register' %}" class="navigation-btn">Register</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Full height and centering styles */
+    html, body {
+        height: 100%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container.py-5 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 3rem !important;
+        width: 148%;
+        max-width: 148%;
+        margin: 0 auto;
+        min-height: calc(100vh - 76px);
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Frosted card styles */
+    .frosted-card {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 30px 50px;
+        min-height: 300px;
+        display: flex;
+        align-items: center;
+    }
+
+    /* Input container styles */
+    .input-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .input-container .mb-3 {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Login form styles */
+    .login-form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 240px;
+        justify-content: space-between;
+    }
+
+    /* Button container styles */
+    .buttons-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        margin-top: auto;
+    }
+
+    /* Input field styles */
+    .frosted-input {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 25px !important;
+        padding: 10px 15px !important;
+        font-size: 16px !important;
+        color: #000 !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        height: 45px;
+        line-height: 1.5;
+        width: 100% !important;
+    }
+
+    /* Button styles */
+    .confirm-btn, .navigation-btn {
+        padding: 10px 25px;
+        border-radius: 25px;
+        border: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+
+    .confirm-btn:hover, .navigation-btn:hover {
+        background: rgba(0, 0, 0, 1);
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Form label styling */
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000000;
+        margin-bottom: 5px;
+        text-align: left;
+        display: block;
+        width: 100%;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .container.py-5 {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .frosted-card {
+            padding: 20px;
+        }
+        
+        .input-container .mb-3 {
+            max-width: 100%;
+        }
+        
+        .buttons-container {
+            flex-direction: row;
+            gap: 10px;
+        }
+    }
+</style>
 {% endblock %}

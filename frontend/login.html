@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - The Courts</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .social-login {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .divider span {
+            padding: 0 10px;
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .social-button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .social-button:hover {
+            background: #f8f9fa;
+        }
+
+        .social-button img {
+            width: 20px;
+            margin-right: 10px;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <h3 class="text-center mb-4">Login to The Courts</h3>
+
+            <!-- Social Login Buttons -->
+            <div class="social-login">
+                <!-- Google Sign-In -->
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                     data-callback="handleGoogleSignIn">
+                </div>
+                <div class="g_id_signin" data-type="standard"></div>
+
+                <!-- Apple Sign-In (Add when you have Apple Developer Account) -->
+                <button class="social-button mt-2" onclick="handleAppleSignIn()">
+                    <img src="images/apple-logo.png" alt="Apple logo">
+                    Sign in with Apple
+                </button>
+            </div>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <!-- Email/Password Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                    <div class="error-message" id="loginError"></div>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+
+            <div class="register-link">
+                <p>Don't have an account? <a href="register.html">Register here</a></p>
+                <a href="forgot-password.html">Forgot password?</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Handle traditional login
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('loginError');
+
+            try {
+                const response = await fetch('http://localhost:8000/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Store token
+                    localStorage.setItem('authToken', data.access_token);
+                    
+                    // Store user info if needed
+                    const userResponse = await fetch('http://localhost:8000/auth/me', {
+                        headers: {
+                            'Authorization': `Bearer ${data.access_token}`
+                        }
+                    });
+                    
+                    if (userResponse.ok) {
+                        const userData = await userResponse.json();
+                        localStorage.setItem('user', JSON.stringify(userData));
+                        
+                        // Redirect based on user role
+                        if (userData.is_admin) {
+                            window.location.href = '/admin/dashboard.html';
+                        } else {
+                            window.location.href = '/index.html';
+                        }
+                    }
+                } else {
+                    const error = await response.json();
+                    errorElement.textContent = error.detail;
+                    errorElement.style.display = 'block';
+                }
+            } catch (error) {
+                errorElement.textContent = 'An error occurred. Please try again.';
+                errorElement.style.display = 'block';
+            }
+        }
+
+        // Handle Google Sign-In
+        async function handleGoogleSignIn(response) {
+            try {
+                const result = await fetch('http://localhost:8000/auth/google-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        token: response.credential
+                    })
+                });
+
+                if (result.ok) {
+                    const data = await result.json();
+                    localStorage.setItem('authToken', data.access_token);
+                    window.location.href = '/index.html';
+                } else {
+                    throw new Error('Google sign-in failed');
+                }
+            } catch (error) {
+                console.error('Error during Google sign-in:', error);
+                document.getElementById('loginError').textContent = 'Google sign-in failed. Please try again.';
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // Handle Apple Sign-In
+        async function handleAppleSignIn() {
+            // Implement Apple Sign-In when you have Apple Developer Account
+            alert('Apple Sign-In coming soon!');
+        }
+
+        // Check if user is already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                if (user.is_admin) {
+                    window.location.href = '/admin/dashboard.html';
+                } else {
+                    window.location.href = '/index.html';
+                }
+            }
+        });
+    </script>
+</body>
+</html> 

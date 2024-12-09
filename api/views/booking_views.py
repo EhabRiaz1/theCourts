@@ -10,10 +10,22 @@ import random
 import string
 from django.db import transaction
 
+class AllowAnyForCreateBookingPermission(permissions.BasePermission):
+    """
+    Custom permission to allow anyone to create a booking,
+    but require authentication for other actions
+    """
+    def has_permission(self, request, view):
+        # Allow create (POST) for everyone
+        if view.action == 'create':
+            return True
+        # For other actions, require authentication
+        return request.user and request.user.is_authenticated
+
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAnyForCreateBookingPermission]
 
     def generate_booking_reference(self):
         """Generate a unique booking reference"""
@@ -35,10 +47,6 @@ class BookingViewSet(viewsets.ModelViewSet):
                 
                 # Generate and validate booking reference
                 booking_ref = self.generate_booking_reference()
-                if not booking_ref:
-                    raise ValueError("Empty booking reference generated")
-                
-                # Ensure booking reference is set
                 data['booking_reference'] = booking_ref
                 
                 start_time = datetime.fromisoformat(data['start_time'].replace('Z', '+00:00'))
@@ -47,53 +55,27 @@ class BookingViewSet(viewsets.ModelViewSet):
 
                 # Handle user information
                 if request.user.is_authenticated:
-                    data['guest_name'] = f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username
-                    data['guest_email'] = request.user.email
-                    data['guest_phone'] = getattr(request.user, 'phone_number', '')
-                    data['user'] = request.user.id
-                else:
-                    # Validate guest information is provided
-                    if not all([data.get('guest_name'), data.get('guest_email'), data.get('guest_phone')]):
-                        return Response(
-                            {"error": "Guest information (name, email, and phone) is required"},
-                            status=status.HTTP_400_BAD_REQUEST
-                        )
+                    data.update({
+                        'guest_name': f"{request.user.first_name} {request.user.last_name}".strip() or request.user.username,
+                        'guest_email': request.user.email,
+                        'user': request.user.id
+                    })
+                    # Only update phone if not provided in request
+                    if 'guest_phone' not in data:
+                        data['guest_phone'] = getattr(request.user, 'phone_number', '')
 
-                sport_type = data.pop('sport_type')
-                if sport_type == 'PICKLE':
-                    courts = Court.objects.filter(
-                        court_type__in=['PICKLE_PRIORITY', 'PICKLE_STANDARD'],
-                        is_active=True
-                    )
-                else:
-                    courts = Court.objects.filter(
-                        court_type='PADDLE',
-                        is_active=True
-                    )
-
-                court = None
-                for c in courts:
-                    if not Booking.objects.filter(
-                        court=c,
-                        status__in=['PENDING', 'APPROVED'],
-                        start_time__lt=end_time,
-                        end_time__gt=start_time
-                    ).exists():
-                        court = c
-                        break
-
-                if not court:
-                    raise ValueError("No courts available for the selected time")
-
+                # Get court based on court ID directly from request
+                court = Court.objects.get(id=data['court'])
+                
+                # Calculate price
                 hourly_rate = Decimal(str(court.hourly_rate))
                 duration_decimal = Decimal(str(duration_hours))
                 total_price = (hourly_rate * duration_decimal).quantize(Decimal('0.01'))
 
-                # Update data with required fields
+                # Update data with calculated fields
                 data.update({
-                    'court': court.id,
                     'end_time': end_time.isoformat(),
-                    'total_price': str(total_price),  # Ensure total_price is a string
+                    'total_price': str(total_price),
                     'duration_hours': duration_hours,
                     'status': 'PENDING'
                 })
@@ -105,29 +87,22 @@ class BookingViewSet(viewsets.ModelViewSet):
                     print(f"Serializer errors: {serializer.errors}")
                     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
-                print(f"Validated data: {serializer.validated_data}")  # Debug print
-                
                 booking = serializer.save()
-                
-                # Verify all required fields were saved
-                if not booking.total_price:
-                    raise ValueError("Total price was not saved correctly")
 
                 return Response({
                     'booking_reference': booking.booking_reference,
                     'status': 'success',
                     'message': 'Booking created successfully',
-                    'total_price': str(booking.total_price)  # Include in response
+                    'total_price': str(booking.total_price)
                 }, status=status.HTTP_201_CREATED)
 
-        except ValueError as e:
-            print(f"ValueError: {str(e)}")
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Court.DoesNotExist:
+            return Response({"error": "Invalid court ID"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(f"Unexpected error: {str(e)}")
             import traceback
             traceback.print_exc()
             return Response(
-                {"error": "An unexpected error occurred"},
+                {"error": "An unexpected error occurred", "detail": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             ) 

@@ -17,5 +17,5 @@ urlpatterns = [
     path('api/courts/available_slots/', views.CourtViewSet.as_view({'get': 'available_slots'}), name='available-slots'),
     path('api/', include(router.urls)),
     path('admin-dashboard/', views.admin_dashboard, name='admin-dashboard'),
-    path('booking-status/', BookingStatusView.as_view(), name='booking_status'),
+    path('booking_status/', views.BookingStatusView.as_view(), name='booking_status'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

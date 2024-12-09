@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'accounts',
     'api',
     'management_portal',
+    'rest_framework.authtoken',
 ]
 
 # Middleware Configuration
@@ -133,9 +134,9 @@ TEMPLATES = [
 # Static Files Configuration
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / "courts/static",
+    BASE_DIR / "static",
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'files'
 
 # Internationalization
 LANGUAGE_CODE = "en-us"
@@ -157,5 +158,23 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
+]
+
+# Add this to your settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # This is crucial - it sets the default to allow any access
+    ],
+}
+
+# Also add CORS settings if not already present
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 

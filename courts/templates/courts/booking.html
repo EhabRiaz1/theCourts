@@ -3,24 +3,112 @@
 
 {% block extra_css %}
 <style>
+    /* Import DM Sans font */
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap');
+
+    /* Base layout styles */
+    html, body {
+        min-height: 100vh;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Center the booking container */
+    .container.py-5 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center; /* Centers vertically */
+        align-items: center;     /* Centers horizontally */
+        padding-bottom: 3rem !important;
+        gap: 2rem;  /* Adds consistent spacing between elements */
+    }
+
+    /* Make the booking content take appropriate width */
+    .container.py-5 > * {
+        width: 100%;
+        max-width: 1200px; /* Or whatever maximum width you prefer */
+    }
+
+    /* Override navbar styles just for booking page */
+    .navbar {
+        background: #000 !important;  /* Force black background */
+    }
+
+    .navbar.navbar-sticky {
+        background: #000 !important;
+        box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* Keep both sticky and non-sticky states white text */
+    .navbar:not(.navbar-sticky) .nav-link,
+    .navbar:not(.navbar-sticky) .navbar-brand,
+    .navbar:not(.navbar-sticky) .custom-btn,
+    .navbar.navbar-sticky .nav-link,
+    .navbar.navbar-sticky .navbar-brand,
+    .navbar.navbar-sticky .custom-btn {
+        color: white !important;
+    }
+
+    /* Match home.html hover effect */
+    .nav-link:hover {
+        color: #fff !important;
+        text-shadow: 0 0 10px #00ff00,
+                     0 0 20px #00ff00,
+                     0 0 30px #00ff00,
+                     0 0 40px #00ff00;
+        transform: scale(1.05);
+    }
+
+    /* Mobile menu adjustments */
+    @media screen and (max-width: 991px) {
+        .navbar-collapse {
+            background: #000;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+    }
+
     .sport-card {
-        border: 2px solid #eee;
+        border: 2px solid #000000;
         padding: 30px;
-        margin: 15px 0;
-        border-radius: 12px;
+        border-radius: 20px;
         cursor: pointer;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 120px;
+        background-color: transparent;
+        width: 100%;
+        margin: 0;
+    }
+
+    .sport-card h4 {
+        margin: 0;
+        font-size: 24px;
+        color: #000000;
     }
 
     .sport-card:hover {
-        transform: translateY(-5px);
+        transform: scale(1.05);
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
     .sport-card.selected {
-        border-color: #007bff;
+        border-color: #000000;
         background-color: #f8f9fa;
     }
 
@@ -29,7 +117,7 @@
         position: absolute;
         top: 15px;
         right: 15px;
-        background: #007bff;
+        background: #000000;
         color: white;
         width: 30px;
         height: 30px;
@@ -86,15 +174,810 @@
 
     .time-slot:hover {
         background-color: #f8f9fa;
-        border-color: #007bff;
+        border-color: #000000;
     }
 
     .time-slot.selected {
-        background-color: #007bff;
+        background-color: #000000;
         color: white;
-        border-color: #007bff;
+        border-color: #000000;
+    }
+
+    /* Progress Bar Container */
+    .progress-bar {
+        width: 100%;
+        max-width: 1200px;
+        height: 10px;
+        background-color: #000;
+        border-radius: 5px;
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Progress Indicator */
+    .progress {
+        height: 100%;
+        background-color: #00ff00;
+        border-radius: 5px;
+        transition: width 0.3s ease;
+        box-shadow: 0 0 10px #00ff00,
+                   0 0 20px #00ff00,
+                   0 0 30px #00ff00,
+                   inset 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Update heading style */
+    .card-body h3 {
+        color: #000000;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 32px;  /* 32pts converted to pixels */
+        font-weight: 500;  /* Adjust weight as needed */
+    }
+
+    /* Update the container layout */
+    .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .col-md-6 {
+        flex: 1;
+        min-width: 0;
+        max-width: 400px;
+    }
+
+    /* Optional: Adjust the card's container width */
+    .card-body {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Add responsive breakpoint */
+    @media screen and (max-width: 768px) {
+        .row {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .col-md-6 {
+            width: 100%;
+        }
+    }
+
+    /* Frosted glass effect */
+    .frosted-card {
+        background: rgba(225, 243, 171, 0.533);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .frosted-input {
+        background: rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 10px !important;
+        padding: 10px 15px !important;  /* Adjusted padding */
+        font-size: 16px !important;  /* Slightly smaller font */
+        color: #000 !important;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        height: 45px;  /* Consistent height */
+        line-height: 1.5;
+    }
+
+    .duration-control {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 60px;
+    }
+
+    .circular-btn-wrapper {
+        width: 80px;
+        height: 80px;
+        position: relative;
+        opacity: 0.7;
+    }
+
+    .circular-btn {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        font-size: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #000000;
+    }
+
+    .circular-btn:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .duration-display {
+        font-size: 36px;
+        min-width: 150px;
+        text-align: center;
+        color: #000000;
+    }
+
+    /* Custom Flatpickr styles */
+    .flatpickr-calendar {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        border-radius: 15px !important;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1) !important;
+    }
+
+    .flatpickr-day.selected {
+        background: #000 !important;
+        border-color: #000 !important;
+    }
+
+    .flatpickr-day:hover {
+        background: rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .navigation-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 0 10px;
+    }
+
+    .navigation-btn:hover {
+        background: rgba(0, 0, 0, 1);
+        transform: scale(1.05);
+    }
+
+    .navigation-btn:disabled {
+        background: rgba(0, 0, 0, 0.3);
+        cursor: not-allowed;
+    }
+
+    /* Optional: Add this if you want the buttons side by side */
+    .mt-4.text-center {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    /* Update time slots container for horizontal scrolling */
+    .time-slots-container {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Update time slots grid for horizontal layout */
+    .time-slots-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 15px;
+        padding-bottom: 10px;
+        min-height: 80px;
+    }
+
+    .time-slot {
+        flex: 0 0 100px;
+        width: 100px;
+        min-width: 100px;
+        padding: 12px 8px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        text-align: center;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        transition: all 0.3s ease;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 16px;
+        color: #000000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Custom scrollbar styling */
+    .time-slots-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .time-slots-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+
+    .time-slots-container::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    .time-slots-container::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    /* Maintain other styles */
+    .time-slot:hover {
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(1.05);
+        border-color: #000000;
+    }
+
+    .time-slot.selected {
+        background: #000000;
+        color: white;
+        border-color: #000000;
+        transform: scale(1.05);
+    }
+
+    /* Optional: Add scroll indicators */
+    .time-slots-container::before,
+    .time-slots-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 30px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .time-slots-container::before {
+        left: 0;
+        background: linear-gradient(to right, rgba(204, 228, 75, 0.5), transparent);
+    }
+
+    .time-slots-container::after {
+        right: 0;
+        background: linear-gradient(to left, rgba(204, 228, 75, 0.5), transparent);
+    }
+
+    /* Update column widths for time slots section */
+    .row .col-md-8 {
+        flex: 0 0 85%;  /* Increase width to 85% */
+        max-width: 85%;
+    }
+
+    .row .col-md-4 {
+        flex: 0 0 15%;  /* Decrease summary width to 15% */
+        max-width: 15%;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 1200px) {
+        .row .col-md-8 {
+            flex: 0 0 80%;
+            max-width: 80%;
+        }
+        
+        .row .col-md-4 {
+            flex: 0 0 20%;
+            max-width: 20%;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        .row .col-md-8,
+        .row .col-md-4 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    .booking-summary-card {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        height: 100%;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 768px) {
+        .time-slots-grid {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+        }
+        
+        .booking-summary-card {
+            margin-top: 20px;
+        }
+    }
+
+    /* Booking Summary Styles */
+    .booking-details {
+        text-align: left;
+        padding: 20px;
+    }
+
+    .summary-item {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .summary-item h5 {
+        font-size: 14px;
+        font-weight: 600;  /* Made slightly bolder */
+        margin-bottom: 8px;
+        color: #000000;  /* Black headings */
+    }
+
+    .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000;  /* White values */
+    }
+
+    .summary-item.total {
+        flex: 1;
+        min-width: 150px;
+        max-width: 200px;
+        background: rgba(0, 0, 0, 0.1);
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    /* Booking Summary Grid */
+    .booking-summary-grid {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    .summary-item {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 20px;
+        text-align: left;
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .summary-item h5 {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #000000;
+    }
+
+    .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000;
+    }
+
+    .summary-item.total {
+        background: rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #000000;  /* Ensuring total price is also white */
+    }
+
+    /* Custom scrollbar for horizontal scroll */
+    .booking-summary-grid::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .booking-summary-grid::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+    }
+
+    .booking-summary-grid::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+
+    /* Responsive adjustments */
+    @media screen and (max-width: 992px) {
+        .booking-summary-grid {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+
+    /* Booking Summary Styles */
+    .booking-summary-container {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 20px;
+        width: 100%;  /* Ensure full width */
+        margin: 0 auto;
+        overflow: hidden;  /* Contain the children */
+    }
+
+    .booking-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        gap: 15px;  /* Reduce gap slightly */
+        padding: 0;  /* Remove padding to maximize space */
+        width: 100%;  /* Ensure full width */
+        overflow-x: auto;  /* Allow horizontal scroll if needed */
+    }
+
+    .summary-item {
+        flex: 1;
+        min-width: 140px;  /* Slightly reduce min-width */
+        max-width: 180px;  /* Slightly reduce max-width */
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        padding: 15px;  /* Slightly reduce padding */
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+    }
+
+    .summary-item.total {
+        flex: 1;
+        min-width: 140px;  /* Match other items */
+        max-width: 180px;  /* Match other items */
+        background: rgba(0, 0, 0, 0.1);
+        justify-content: flex-start;
+        text-align: left;
+    }
+
+    .summary-item h5 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #000000 !important;
+    }
+
+    .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000 !important;
+    }
+
+    .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #000000 !important;
+    }
+
+    /* Remove any center alignment for the total item */
+    #bookingSummary .summary-item.total {
+        text-align: left;
+    }
+
+    /* Responsive handling */
+    @media screen and (max-width: 768px) {
+        .booking-summary-row {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        
+        .summary-item {
+            flex: 0 0 auto;
+        }
+    }
+
+    .summary-item h5 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #000000 !important;
+    }
+
+    .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000 !important;
+    }
+
+    .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #000000 !important;
+    }
+
+    .summary-heading {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #000000 !important;
+    }
+
+    .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000 !important;
+    }
+
+    .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #000000 !important;
+    }
+
+    /* Add this at the END of your CSS to ensure it takes precedence */
+    #bookingSummary .summary-item h5 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #000000 !important;
+    }
+
+    #bookingSummary .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000 !important;
+    }
+
+    #bookingSummary .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #000000 !important;
+    }
+
+    /* Add these updated rules */
+    #bookingSummary .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000 !important;
+    }
+
+    #bookingSummary .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+        color: #000000 !important;
+    }
+
+    /* Add this at the very end of your CSS */
+    #bookingSummary div.summary-item p,
+    #bookingSummary div.summary-item h5,
+    #bookingSummary div.summary-item.total p {
+        color: #000000 !important;
+    }
+
+    /* Consolidated Booking Summary Styles */
+    .booking-summary-container {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        padding: 20px;
+        width: 100%;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .booking-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        gap: 15px;
+        padding: 0;
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    /* Single source of truth for summary items */
+    .summary-item {
+        flex: 1;
+        min-width: 140px;
+        max-width: 180px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 15px;  /* Ensure consistent border radius */
+        padding: 15px;
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        text-align: left;
+    }
+
+    /* Only override necessary properties for total */
+    .summary-item.total {
+        background: rgba(0, 0, 0, 0.1);
+    }
+
+    .summary-item h5 {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #000000 !important;
+    }
+
+    .summary-item p {
+        font-family: 'DM Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+        color: #000000 !important;
+    }
+
+    .summary-item.total p {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    /* Add these new styles for the login card */
+    .login-card {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 15px 30px;  /* Reduced vertical padding */
+        margin-bottom: 2rem;
+        width: 100%;
+        max-width: none;  /* Allow it to be wider */
+    }
+
+    .login-card .row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0;
+    }
+
+    .login-card h4 {
+        text-align: left;
+        margin: 0;
+    }
+
+    .login-btn {
+        padding: 10px 25px;  /* Adjust padding for text */
+        border-radius: 25px;  /* Rounded edges */
+        border: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 16px;
+        display: inline-flex;  /* Changed to inline-flex */
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+        background: rgba(0, 0, 0, 1);
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Add this style for the buttons container */
+    .booking-navigation {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 2rem;
+    }
+
+    /* Style for the confirm booking button */
+    .confirm-btn {
+        padding: 10px 25px;
+        border-radius: 25px;
+        border: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .confirm-btn:hover {
+        background: rgba(0, 0, 0, 1);
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Form label styling */
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #000000;
+        margin-bottom: 5px;
+    }
+
+    /* Row spacing */
+    .row {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
+
+    .col-md-6 {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    /* Adjust spacing between rows */
+    .row + .row {
+        margin-top: 5px;
+    }
+
+    /* Ensure consistent spacing for all form groups */
+    .mb-3 {
+        margin-bottom: 15px !important;
+    }
+
+    /* Update confirmation summary styles */
+    #confirmationSummary h6 {
+        color: #000000;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    #confirmationSummary p {
+        color: #000000;
+        font-family: 'DM Sans', sans-serif;
+        margin-bottom: 1rem;
     }
 </style>
+{{ block.super }}
 {% endblock %}
 
 {% block content %}
@@ -106,251 +989,305 @@
 
     <!-- Page 1: Sport Selection -->
     <div class="booking-page active" id="sportSelection">
-        <h3 class="mb-4">Select Your Sport</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="sport-card" data-sport="PICKLE" onclick="selectSport('PICKLE', this)">
-                    <h4>Pickle Ball</h4>
-                    <p class="text-primary fs-4 fw-bold">PKR 6,000/hour</p>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">✓ Professional Courts</li>
-                        <li class="mb-2">✓ Equipment Available</li>
-                        <li>✓ All Skill Levels</li>
-                    </ul>
+        <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+            <div class="card-body text-center">
+                <h3 class="mb-4" style="color: #000000;">Select Your Sport</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="sport-card" data-sport="PICKLE" onclick="selectSport('PICKLE', this)">
+                            <h4 class="text-center mb-0">Pickle Ball</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="sport-card" data-sport="PADDLE" onclick="selectSport('PADDLE', this)">
+                            <h4 class="text-center mb-0">Paddle Ball</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 text-center">
+                    <button class="navigation-btn" onclick="nextPage()" id="sportNextBtn" disabled>&gt;</button>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="sport-card" data-sport="PADDLE" onclick="selectSport('PADDLE', this)">
-                    <h4>Paddle Ball</h4>
-                    <p class="text-primary fs-4 fw-bold">PKR 8,000/hour</p>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">✓ Premium Court</li>
-                        <li class="mb-2">✓ Professional Equipment</li>
-                        <li>✓ High Performance</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="mt-4">
-            <button class="btn btn-primary" onclick="nextPage()" id="sportNextBtn" disabled>Continue</button>
         </div>
     </div>
 
     <!-- Page 2: Date & Duration -->
     <div class="booking-page" id="dateSelection">
-        <h3 class="mb-4">Select Date & Duration</h3>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <label class="form-label">Select Date</label>
-                            <input type="text" id="datePicker" class="form-control">
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Duration</label>
-                            <div class="input-group">
-                                <button class="btn btn-outline-secondary" id="decreaseDuration">-</button>
-                                <span class="form-control text-center" id="durationDisplay">1 hour</span>
-                                <button class="btn btn-outline-secondary" id="increaseDuration">+</button>
-                                <input type="hidden" id="duration" value="1">
+        <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+            <div class="card-body text-center">
+                <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold;">Select Date & Duration</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="frosted-card">
+                            <div class="card-body p-4">
+                                <div class="mb-4">
+                                    <h4 class="mb-3" style="color: #000000; font-size: 24px;">Select Your Preferred Date</h4>
+                                    <input type="text" id="datePicker" class="form-control frosted-input" style="max-width: 800px; margin: 0 auto;">
+                                </div>
+                                <div class="mb-3">
+                                    <h4 class="mb-3" style="color: #000000; font-size: 24px;">Choose Duration</h4>
+                                    <div class="duration-control">
+                                        <div class="circular-btn-wrapper">
+                                            <button class="circular-btn" id="decreaseDuration">-</button>
+                                        </div>
+                                        <span class="duration-display" id="durationDisplay">1 hour</span>
+                                        <div class="circular-btn-wrapper">
+                                            <button class="circular-btn" id="increaseDuration">+</button>
+                                        </div>
+                                        <input type="hidden" id="duration" value="1">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div class="mt-4 text-center">
+                    <button class="navigation-btn" onclick="previousPage()">&lt;</button>
+                    <button class="navigation-btn" onclick="nextPage()" id="dateNextBtn" disabled>&gt;</button>
+                </div>
             </div>
-        </div>
-        <div class="mt-4">
-            <button class="btn btn-secondary me-2" onclick="previousPage()">Back</button>
-            <button class="btn btn-primary" onclick="nextPage()" id="dateNextBtn" disabled>Continue</button>
         </div>
     </div>
 
     <!-- Page 3: Time Slots -->
     <div class="booking-page" id="timeSelection">
-        <h3 class="mb-4">Select Available Time</h3>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="time-slots-grid" id="timeSlots">
-                            <!-- Time slots will be populated by JavaScript -->
+        <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+            <div class="card-body text-center">
+                <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold;">Select Available Time</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <!-- Time Slots Panel -->
+                        <div class="frosted-card mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="mb-3" style="color: #000000; font-size: 24px;">Available Time Slots</h4>
+                                <div class="time-slots-container">
+                                    <div class="time-slots-grid" id="timeSlots">
+                                        <!-- Time slots will be populated by JavaScript -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Booking Summary Panel -->
+                        <div class="card-body p-4">
+                            <h4 class="mb-3" style="color: #000000; font-size: 24px;">Booking Summary</h4>
+                            <div class="booking-summary-container">
+                                <div id="bookingSummary" class="booking-summary-row">
+                                    <!-- Summary will be populated by JavaScript -->
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Booking Summary</h5>
-                    </div>
-                    <div id="bookingSummary">
-                        <!-- Summary will be populated by JavaScript -->
-                    </div>
+                <div class="mt-4 text-center">
+                    <button class="navigation-btn" onclick="previousPage()">&lt;</button>
+                    <button class="navigation-btn" onclick="nextPage()" id="timeNextBtn" disabled>&gt;</button>
                 </div>
             </div>
         </div>
-        <div class="mt-4">
-            <button class="btn btn-secondary me-2" onclick="previousPage()">Back</button>
-            <button class="btn btn-primary" onclick="nextPage()" id="timeNextBtn" disabled>Continue</button>
-        </div>
     </div>
+
 
     <!-- Page 4: User Details -->
     <div class="booking-page" id="userDetails">
-        <h3 class="mb-4">Complete Your Booking</h3>
-        <div class="row">
-            <div class="col-md-8">
-                {% if user.is_authenticated %}
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Booking as {{ user.get_full_name }}</h5>
-                        <p class="card-text">Please confirm your contact details below:</p>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="userName" 
-                                       value="{{ user.get_full_name }}" readonly>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" id="userEmail" 
-                                       value="{{ user.email }}" readonly>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Phone Number *</label>
-                                <input type="tel" class="form-control" id="phoneNumber" 
-                                       value="{{ user.phone_number }}" required>
-                                <small class="form-text text-muted">You can update this if needed</small>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">WhatsApp Number</label>
-                                <input type="tel" class="form-control" id="whatsappNumber" 
-                                       value="{{ user.whatsapp_number }}"
-                                       placeholder="If different from phone number">
-                            </div>
-                        </div>
+        <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+            <div class="card-body text-center">
+                <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold;">Complete Your Booking</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        {% if user.is_authenticated %}
+                        <!-- Authenticated User Form -->
+                        <div class="frosted-card mb-4">
+                            <div class="card-body p-4">
+                                <h4 class="mb-3" style="color: #000000; font-size: 24px;">Booking as {{ user.get_full_name }}</h4>
+                                <p class="text-muted mb-4">Please confirm your contact details below:</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <input type="text" class="form-control frosted-input" id="userName" 
+                                               value="{{ user.get_full_name }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control frosted-input" id="userEmail" 
+                                               value="{{ user.email }}" readonly>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone Number *</label>
+                                        <input type="tel" class="form-control frosted-input" id="phoneNumber" 
+                                               value="{{ user.phone_number }}" required>
+                                        <small class="form-text text-muted">You can update this if needed</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">WhatsApp Number</label>
+                                        <input type="tel" class="form-control frosted-input" id="whatsappNumber" 
+                                               value="{{ user.whatsapp_number }}"
+                                               placeholder="If different from phone number">
+                                    </div>
+                                </div>
 
-                        <div class="alert alert-info">
-                            <small>
-                                <i class="fas fa-info-circle"></i> 
-                                Your booking confirmation will be sent to both your email and phone number
-                            </small>
-                        </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <i class="fas fa-info-circle"></i> 
+                                        Your booking confirmation will be sent to both your email and phone number
+                                    </small>
+                                </div>
 
-                        <div class="mt-3">
-                            <button class="btn btn-primary w-100" onclick="submitBooking()" id="submitBtn">
-                                Confirm Booking
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                {% else %}
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h5 class="mb-0">Already have an account?</h5>
-                            </div>
-                            <div class="col-auto">
-                                <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-outline-primary">Log In</a>
+                                <div class="mt-4 text-center">
+                                    <div class="booking-navigation">
+                                        <button class="navigation-btn" onclick="previousPage()">&lt;</button>
+                                        <button class="confirm-btn" onclick="submitBooking()" id="submitBtn">
+                                            Confirm Booking
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Continue as Guest</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="guestForm" onsubmit="event.preventDefault(); submitBooking();">
+                        {% else %}
+                        <!-- Guest User Forms -->
+                        <div class="login-card">
                             <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Full Name*</label>
-                                    <input type="text" class="form-control" id="guestName" required>
+                                <div class="col">
+                                    <h4 style="color: #000000; font-size: 24px;">Already have an account?</h4>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Email*</label>
-                                    <input type="email" class="form-control" id="guestEmail" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Phone Number*</label>
-                                    <input type="tel" class="form-control" id="guestPhone" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">WhatsApp Number</label>
-                                    <input type="tel" class="form-control" id="guestWhatsapp" 
-                                           placeholder="If different from phone number">
-                                </div>
-                                <div class="form-group mb-3">
-                                    <label for="phoneNumber">Phone Number *</label>
-                                    <input type="tel" class="form-control" id="phoneNumber" required>
-                                    <small class="form-text text-muted">Required for booking confirmation</small>
+                                <div class="col-auto">
+                                    <a href="{% url 'accounts:login' %}?next={{ request.path }}" 
+                                       class="login-btn">
+                                        Log In
+                                    </a>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100" id="submitBtn">Confirm Booking</button>
-                        </form>
+                        </div>
+
+                        <div class="frosted-card">
+                            <div class="card-body p-4">
+                                <h4 class="mb-3" style="color: #000000; font-size: 24px;">Continue as Guest</h4>
+                                <form id="guestForm" onsubmit="event.preventDefault(); submitBooking();">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Full Name*</label>
+                                            <input type="text" class="form-control frosted-input" id="guestName" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Email*</label>
+                                            <input type="email" class="form-control frosted-input" id="guestEmail" required>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Phone Number*</label>
+                                            <input type="tel" class="form-control frosted-input" id="phoneNumber" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">WhatsApp Number</label>
+                                            <input type="tel" class="form-control frosted-input" id="guestWhatsapp" 
+                                                placeholder="If different from phone number">
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 text-center">
+                                        <div class="booking-navigation">
+                                            <button class="navigation-btn" onclick="previousPage()">&lt;</button>
+                                            <button class="confirm-btn" onclick="submitBooking()" id="submitBtn">
+                                                Confirm Booking
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
-                {% endif %}
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Booking Summary</h5>
-                    </div>
-                    <div id="bookingSummary">
-                        <!-- Summary will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="mt-4">
-            <button class="btn btn-secondary" onclick="previousPage()">Back</button>
         </div>
     </div>
 
-    <!-- Page 5: Confirmation -->
+    <!-- Page 6: Confirmation -->
     <div class="booking-page" id="confirmation">
-        <div class="text-center">
-            <div class="mb-4">
-                <div class="display-1 text-success">
-                    <i class="fas fa-check-circle"></i>
+        <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+            <div class="card-body text-center">
+                <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold; font-family: 'DM Sans', sans-serif;">Your booking is pending approval!</h3>
+                
+                <div class="row justify-content-between px-4">
+                    <!-- Left Column: Booking Details -->
+                    <div class="col-md-6">
+                        <div class="frosted-card h-100">
+                            <div class="card-body p-4">
+                                <div class="display-1 text-success mb-3">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                                <h4 style="color: #000000; font-size: 24px; font-family: 'DM Sans', sans-serif;">
+                                    Booking Reference: <span id="bookingReference" class="fw-bold" style="color: #000000;"></span>
+                                </h4>
+                                <div id="confirmationSummary" class="mt-4" style="color: #000000; font-family: 'DM Sans', sans-serif;">
+                                    <!-- Final summary will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Next Steps -->
+                    <div class="col-md-5">
+                        <!-- Step 1 -->
+                        <div class="frosted-card mb-3">
+                            <div class="card-body p-4">
+                                <h5 style="color: #000000; font-family: 'DM Sans', sans-serif; font-weight: bold;">Step 1: Make Payment</h5>
+                                <div class="mt-2" style="color: #000000; font-family: 'DM Sans', sans-serif;">
+                                    <p class="mb-1">Bank: Allied Bank Pakistan</p>
+                                    <p class="mb-1">Account Title: Sports Complex</p>
+                                    <p class="mb-1">Account Number: 1234-5678-9012-3456</p>
+                                    <p class="mb-1">IBAN: PK36ABPA0010001234567</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="frosted-card mb-3">
+                            <div class="card-body p-4">
+                                <h5 style="color: #000000; font-family: 'DM Sans', sans-serif; font-weight: bold;">Step 2: Send Payment Receipt</h5>
+                                <div class="mt-2">
+                                    <button class="btn btn-success rounded-pill px-4 py-2" 
+                                            onclick="sendWhatsAppMessage()"
+                                            id="whatsappButton"
+                                            style="font-family: 'DM Sans', sans-serif;">
+                                        <i class="fab fa-whatsapp me-2"></i>Send via WhatsApp
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="frosted-card mb-3">
+                            <div class="card-body p-4">
+                                <h5 style="color: #000000; font-family: 'DM Sans', sans-serif; font-weight: bold;">Step 3: Track Your Booking</h5>
+                                <div class="mt-2">
+                                    <a href="{% url 'courts:booking_status' %}" 
+                                       class="btn btn-dark rounded-pill px-4 py-2"
+                                       style="font-family: 'DM Sans', sans-serif;">
+                                        Check Booking Status
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="mt-3">Booking Request Submitted!</h3>
-                <p class="text-muted">Your booking is now pending confirmation.</p>
-                <p>You can check your booking status anytime using your reference number:
-                    <a href="{% url 'courts:booking_status' %}?reference={{ booking.booking_reference }}" class="btn btn-link">
-                        Check Booking Status
+
+                <div class="mt-4">
+                    <a href="{% url 'courts:home' %}" 
+                       class="btn btn-outline-dark rounded-pill px-4 py-2 me-2"
+                       style="font-family: 'DM Sans', sans-serif;">
+                        Return Home
                     </a>
-                </p>
-            </div>
-            
-            <div class="card mb-4 mx-auto" style="max-width: 500px;">
-                <div class="card-header">
-                    <h5 class="mb-0">Booking Reference: <span id="bookingReference" class="text-primary"></span></h5>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}" 
+                       class="btn btn-dark rounded-pill px-4 py-2"
+                       style="font-family: 'DM Sans', sans-serif;">
+                        View My Bookings
+                    </a>
+                    {% endif %}
                 </div>
-                <div class="card-body">
-                    <div id="confirmationSummary">
-                        <!-- Final summary will be populated by JavaScript -->
-                    </div>
-                    <div class="alert alert-info mt-3">
-                        <h6 class="alert-heading">Next Steps:</h6>
-                        <ol class="mb-0 text-start">
-                            <li>You will receive payment instructions via email and WhatsApp</li>
-                            <li>Complete the payment to confirm your booking</li>
-                            <li>You'll receive a confirmation once payment is verified</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            
-            <div>
-                <a href="{% url 'courts:home' %}" class="btn btn-outline-primary me-2">Return Home</a>
-                {% if user.is_authenticated %}
-                <a href="{% url 'accounts:profile' %}" class="btn btn-primary">View My Bookings</a>
-                {% endif %}
             </div>
         </div>
     </div>

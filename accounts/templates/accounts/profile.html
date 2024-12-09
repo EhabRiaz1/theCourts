@@ -2,105 +2,416 @@
 
 {% block content %}
 <div class="container py-5">
-    <div class="row">
-        <!-- User Information Card -->
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Personal Information</h5>
+    <div class="card" style="background-color: rgb(204, 228, 75); border-radius: 20px; border: none;">
+        <div class="card-body text-center">
+            <h3 class="mb-4" style="color: #000000; font-size: 48px; font-weight: bold;">My Profile</h3>
+            <div class="row justify-content-center">
+                <!-- Personal Information Column -->
+                <div class="col-md-4">
+                    <!-- Personal Information Card -->
+                    <div class="frosted-card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Personal Information</h5>
+                            <div class="info-container">
+                                <div class="info-item">
+                                    <label class="form-label">Full Name</label>
+                                    <p class="info-text">{{ user.get_full_name }}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label class="form-label">Email</label>
+                                    <p class="info-text">{{ user.email }}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label class="form-label">Phone Number</label>
+                                    <p class="info-text">{{ user.phone_number }}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label class="form-label">WhatsApp Number</label>
+                                    <p class="info-text">{{ user.whatsapp_number|default:"Same as phone number" }}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label class="form-label">Date of Birth</label>
+                                    <p class="info-text">{{ user.date_of_birth|date:"F j, Y" }}</p>
+                                </div>
+                                <div class="info-item">
+                                    <label class="form-label">Member Since</label>
+                                    <p class="info-text">{{ user.date_joined|date:"F j, Y" }}</p>
+                                </div>
+                            </div>
+                            <div class="buttons-container mt-4">
+                                <button onclick="showEditProfileModal()" class="confirm-btn">Edit Profile</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label class="text-muted">Full Name</label>
-                        <p class="mb-0">{{ user.get_full_name }}</p>
+
+                <!-- Bookings History Column -->
+                <div class="col-md-8">
+                    <div class="frosted-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="card-title mb-0">My Bookings</h5>
+                                <a href="{% url 'courts:booking' %}" class="confirm-btn">New Booking</a>
+                            </div>
+                            {% if bookings %}
+                                <div class="table-responsive">
+                                    <table class="table table-frosted">
+                                        <thead>
+                                            <tr>
+                                                <th>Reference</th>
+                                                <th>Court</th>
+                                                <th>Date</th>
+                                                <th>Time</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for booking in bookings %}
+                                            <tr>
+                                                <td>{{ booking.booking_reference }}</td>
+                                                <td>{{ booking.court.name }}</td>
+                                                <td>{{ booking.start_time|date:"M j, Y" }}</td>
+                                                <td>{{ booking.start_time|time:"g:i A" }}</td>
+                                                <td>
+                                                    <span class="badge status-{{ booking.status|lower }}">
+                                                        {{ booking.status }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <p class="text-muted mb-0">No bookings yet</p>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="text-muted">Email</label>
-                        <p class="mb-0">{{ user.email }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="text-muted">Phone Number</label>
-                        <p class="mb-0">{{ user.phone_number }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="text-muted">WhatsApp Number</label>
-                        <p class="mb-0">{{ user.whatsapp_number|default:"Same as phone number" }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="text-muted">Date of Birth</label>
-                        <p class="mb-0">{{ user.date_of_birth|date:"F j, Y" }}</p>
-                    </div>
-                    <div class="mb-3">
-                        <label class="text-muted">Member Since</label>
-                        <p class="mb-0">{{ user.date_joined|date:"F j, Y" }}</p>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-outline-primary btn-sm">
-                        Edit Profile
-                    </a>
                 </div>
             </div>
-
-            <!-- Loyalty Points Card -->
-            <div class="card">
-                <div class="card-body text-center">
-                    <h3 class="card-title">Loyalty Points</h3>
-                    <div class="display-4 text-primary mb-3">
-                        {{ user.loyalty_points }}
+            <!-- Full-width Loyalty Points Card -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="frosted-card">
+                        <div class="card-body d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <h3 class="card-title mb-0 me-3">Loyalty Points</h3>
+                                <div class="display-4 text-primary mb-0">
+                                    {{ user.loyalty_points }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-warning text-dark me-2">Coming Soon</span>
+                                <p class="text-muted mb-0">Earn points from bookings</p>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-muted">Points earned from bookings</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bookings History -->
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">My Bookings</h5>
-                    <a href="{% url 'courts:booking' %}" class="btn btn-primary btn-sm">
-                        New Booking
-                    </a>
-                </div>
-                <div class="card-body">
-                    {% if bookings %}
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Reference</th>
-                                        <th>Court</th>
-                                        <th>Date</th>
-                                        <th>Time</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for booking in bookings %}
-                                    <tr>
-                                        <td>{{ booking.booking_reference }}</td>
-                                        <td>{{ booking.court.name }}</td>
-                                        <td>{{ booking.start_time|date:"M j, Y" }}</td>
-                                        <td>{{ booking.start_time|time:"g:i A" }}</td>
-                                        <td>
-                                            <span class="badge bg-{{ booking.status|lower }}">
-                                                {{ booking.status }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <p class="text-muted mb-0">No bookings yet</p>
-                        </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="frosted-card" style="width: 100%; margin: 0;">
+            <div class="card-body text-center">
+                <h5 class="card-title mb-4">Edit Profile Request</h5>
+                <p class="mb-4">To update your profile information, please contact management:</p>
+                <p class="mb-4"><strong>Email:</strong> management@thecourts.com</p>
+                <p class="mb-4"><strong>Phone:</strong> +1234567890</p>
+                <button type="button" class="confirm-btn" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Container styles */
+    .container.py-5 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+        width: 188%;
+        max-width: 188%;
+        margin: 0 auto;
+        height: calc(100vh - 76px);
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+        overflow-y: auto;
+        margin-top: 100px;
+    }
+
+    /* Main card styles */
+    .card {
+        height: auto;
+        overflow-y: auto;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        max-height: calc(100vh - 200px);
+    }
+
+    .card-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Adjust the frosted card height */
+    .frosted-card {
+        height: auto;
+        min-height: auto;
+    }
+
+    /* Adjust table responsive height */
+    .table-responsive {
+        max-height: calc(100vh - 400px);
+        overflow-y: auto;
+    }
+
+    /* Frosted card styles */
+    .frosted-card {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 30px;
+        height: 100%;
+    }
+
+    /* Info container styles */
+    .info-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .info-item {
+        text-align: left;
+    }
+
+    .info-text {
+        margin: 0;
+        padding: 8px 15px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    /* Table styles */
+    .table-frosted {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .table-frosted th,
+    .table-frosted td {
+        border-color: rgba(255, 255, 255, 0.2);
+        padding: 12px 15px;
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    .table-frosted thead th {
+        background: rgba(255, 255, 255, 0.1);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Status badge styles */
+    .badge {
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .status-confirmed {
+        background: rgba(25, 135, 84, 0.3);
+        color: rgba(25, 135, 84, 0.9);
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.3);
+        color: rgba(153, 116, 4, 0.9);
+    }
+
+    .status-cancelled {
+        background: rgba(220, 53, 69, 0.3);
+        color: rgba(220, 53, 69, 0.9);
+    }
+
+    /* Form label styling */
+    .form-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.8);
+        margin-bottom: 5px;
+        text-align: left;
+        display: block;
+        width: 100%;
+    }
+
+    /* Button styles */
+    .confirm-btn {
+        padding: 10px 25px;
+        border-radius: 25px;
+        border: none;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        font-size: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        min-width: 120px;
+    }
+
+    .confirm-btn:hover {
+        background: rgba(0, 0, 0, 1);
+        transform: scale(1.05);
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .container.py-5 {
+            width: 100%;
+            max-width: 100%;
+            padding: 15px;
+        }
+        
+        .frosted-card {
+            padding: 20px;
+        }
+    }
+
+    /* Coming soon badge */
+    .bg-warning {
+        background-color: rgba(255, 193, 7, 0.2) !important;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    .text-dark {
+        color: #856404 !important;
+    }
+
+    /* Loyalty points display */
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    /* Text color adjustments */
+    .info-text {
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    .table-frosted th,
+    .table-frosted td {
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    .form-label {
+        color: rgba(0, 0, 0, 0.8);
+    }
+
+    .text-muted {
+        color: rgba(0, 0, 0, 0.7) !important;
+    }
+
+    /* Status badge adjustments */
+    .status-confirmed {
+        background: rgba(25, 135, 84, 0.3);
+        color: rgba(25, 135, 84, 0.9);
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.3);
+        color: rgba(153, 116, 4, 0.9);
+    }
+
+    .status-cancelled {
+        background: rgba(220, 53, 69, 0.3);
+        color: rgba(220, 53, 69, 0.9);
+    }
+
+    /* Card title adjustments */
+    .card-title {
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    /* Loyalty points text */
+    .display-4 {
+        color: rgba(0, 0, 0, 0.85);
+    }
+
+    .table-responsive {
+        max-height: 400px;
+        overflow-y: auto;
+        border-radius: 15px;
+    }
+
+    /* Style the scrollbar */
+    .table-responsive::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.3);
+    }
+
+    .table-frosted thead {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Modal styles */
+    .modal-dialog {
+        max-width: 500px;
+    }
+
+    .modal .frosted-card {
+        margin: 0;
+        min-height: auto;
+        width: 100%;
+    }
+
+    .modal-backdrop {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+</style>
+
+<script>
+function showEditProfileModal() {
+    var modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+    modal.show();
+}
+</script>
 {% endblock %}

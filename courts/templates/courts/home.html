@@ -7,40 +7,45 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-7 col-12">
-                <div class="hero-text">
+                <div class="hero-text d-flex flex-column align-items-start">
                     <h2 class="mb-4">The best courts in Lahore</h2>
-                    <a href="{% url 'courts:booking' %}" class="custom-btn btn custom-link">Let's begin</a>
+                    <a href="{% url 'courts:booking' %}" class="custom-btn btn custom-link">Book Now</a>
                 </div>
             </div>
         </div>
     </div>
 </section>
+<div class="section-divider"></div>
 
 <!-- About Section -->
 <section id="section_2" class="section about section-padding">
     <div class="container">
         <div class="row">
             <div class="col-12">
-                <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4">
-                    <img src="{% static 'courts/images/the-courts-logo.png' %}" class="img-fluid" alt="The Courts Logo">
+                <div class="section-title-wrap d-flex justify-content-center align-items-center mb-4" style="min-width: 100%; overflow: visible;">
+                    <img src="{% static 'courts/images/the-courts-logo.png' %}" class="img-fluid" alt="The Courts Logo" style="width: 40%; max-width: none;">
                 </div>
             </div>
 
             <div class="container-fluid">
                 <div class="row g-4">
+                    <!-- Main Feature -->
                     <div class="col-12">
                         <div class="feature-module large">
-                            <h3 class="pt-2 mb-3">Premium Sports Experience</h3>
+                            <h3>Premium Sports Experience</h3>
                             <p>Located in the prime location of Gulberg, Lahore, The Courts offers a premium playing experience for both Padel and Pickleball enthusiasts.</p>
                         </div>
                     </div>
 
-                    <!-- Features -->
+                    <!-- Medium Features -->
                     <div class="col-md-6">
                         <div class="feature-module medium">
                             <h4>Lahore's First</h4>
                             <ul>
-                                <li>Proud home to Lahore's first Pickle Ball court</li>
+                                <li>
+                                    <i class="bi bi-check-circle"></i>
+                                    Proud home to Lahore's first Pickle Ball court
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -49,7 +54,27 @@
                         <div class="feature-module medium">
                             <h4>Superior Playing Surface</h4>
                             <ul>
-                                <li>Engineered for optimal grip and ball bounce</li>
+                                <li>
+                                    <i class="bi bi-check-circle"></i>
+                                    Engineered for optimal grip and ball bounce
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Additional Feature -->
+                    <div class="col-12">
+                        <div class="feature-module large">
+                            <h4>Advanced Facilities</h4>
+                            <ul>
+                                <li>
+                                    <i class="bi bi-check-circle"></i>
+                                    High-intensity LED lighting for perfect day and night play
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle"></i>
+                                    Professional-grade equipment available
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -58,70 +83,463 @@
         </div>
     </div>
 </section>
+<div class="section-divider"></div>
 
 <!-- Courts Section -->
-<section id="section_3" class="section courts section-padding">
+<section class="frame-gallery" id="section_3">
     <div class="container">
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-12 text-center mb-5">
-                <h2>Our Courts</h2>
+                <h2 class="text-white">Our Facilities</h2>
             </div>
             
-            <!-- Pickle Ball Courts -->
-            <div class="col-md-6 mb-4">
-                <div class="court-card">
-                    <h3>Pickle Ball</h3>
-                    <p class="price">PKR 6,000/hour</p>
-                    <div class="features">
-                        <ul>
-                            <li>Professional grade courts</li>
-                            <li>High-intensity LED lighting</li>
-                            <li>Premium equipment available</li>
-                        </ul>
+            <!-- Padel Frame -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="frame" style="background: url('{% static 'courts/images/padel-court.jpg' %}') no-repeat center; background-size: cover;">
+                    <div class="text">
+                        <span>🎾</span>
+                        <span>T</span>
+                        <span>R</span>
+                        <span>U</span>
+                        <span>O</span>
+                        <span>C</span>
+                        <span></span>
+                        <span>L</span>
+                        <span>E</span>
+                        <span>D</span>
+                        <span>A</span>
+                        <span>P</span>
+                        <span>🎾</span>
                     </div>
-                    <a href="{% url 'courts:booking' %}?type=pickle" class="btn custom-btn">Book Now</a>
                 </div>
             </div>
 
-            <!-- Padel Court -->
-            <div class="col-md-6 mb-4">
-                <div class="court-card">
-                    <h3>Padel Ball</h3>
-                    <p class="price">PKR 8,000/hour</p>
-                    <div class="features">
-                        <ul>
-                            <li>Professional grade court</li>
-                            <li>High-intensity LED lighting</li>
-                            <li>Premium equipment available</li>
-                        </ul>
+            <!-- Pickle Ball Frame -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="frame" style="background: url('{% static 'courts/images/pickle-court.jpg' %}') no-repeat center; background-size: cover;">
+                    <div class="text">
+                        <span>🏓</span>
+                        <span>L</span>
+                        <span>L</span>
+                        <span>A</span>
+                        <span>B</span>
+                        <span>E</span>
+                        <span>L</span>
+                        <span>K</span>
+                        <span>I</span>
+                        <span>P</span>
+                        <span>🏓</span>
                     </div>
-                    <a href="{% url 'courts:booking' %}?type=padel" class="btn custom-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Cafe Frame -->
+            <div class="col-lg-4 col-md-6 col-12">
+                <div class="frame" style="background: url('{% static 'courts/images/cafe.jpg' %}') no-repeat center; background-size: cover;">
+                    <div class="text">
+                        <span>☕</span>
+                        <span>R</span>
+                        <span>A</span>
+                        <span>B</span>
+                        <span></span>
+                        <span>&</span>
+                        <span></span>
+                        <span>E</span>
+                        <span>F</span>
+                        <span>A</span>
+                        <span>C</span>
+                        <span>☕</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="section-divider"></div>
+
+<!-- Book Now Section -->
+<section class="neon-booking-section section-padding" id="section_4">
+    <div class="container">
+        <div class="neon-booking-container">
+            <div class="text-center">
+                <h2 class="text-white mb-4">Ready to Play?</h2>
+                <a href="{% url 'courts:booking' %}" class="neon-button">BOOK NOW</a>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="section-divider"></div>
+
+<!-- Track Booking Section -->
+<section class="neon-booking-section section-padding" id="section_5">
+    <div class="container">
+        <div class="neon-booking-container" id="statusContainer">
+            <div class="text-center">
+                <h2 class="text-white mb-4">Track Your Booking</h2>
+                <form method="get" action="{% url 'courts:booking_status' %}" class="status-checker-form">
+                    <input type="text" 
+                           name="reference" 
+                           class="neon-input" 
+                           placeholder="Enter booking reference"
+                           value="{{ reference|default:'' }}"
+                           required>
+                    <button type="submit" class="neon-button-secondary">
+                        CHECK STATUS
+                    </button>
+                </form>
+                
+                {% if result %}
+                    {% if result.status == 'success' %}
+                        <div class="booking-results mt-4">
+                            <div class="results-grid">
+                                <div class="result-item">
+                                    <span class="result-label">Reference</span>
+                                    <span class="result-value">{{ result.data.reference }}</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Guest Name</span>
+                                    <span class="result-value">{{ result.data.guest_name }}</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Court</span>
+                                    <span class="result-value">{{ result.data.court }}</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Date</span>
+                                    <span class="result-value">{{ result.data.date }}</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Time</span>
+                                    <span class="result-value">{{ result.data.time }}</span>
+                                </div>
+                                <div class="result-item">
+                                    <span class="result-label">Status</span>
+                                    <span class="result-value status-{{ result.data.status|lower }}">
+                                        {{ result.data.status }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="neon-error mt-4">
+                            {{ result.message }}
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<div class="section-divider"></div>
+
+<!-- Contact Section -->
+<section class="neon-booking-section section-padding" id="section_6">
+    <div class="container">
+        <div class="row">
+            <!-- Location Info -->
+            <div class="col-md-4">
+                <div class="neon-booking-container text-center">
+                    <div class="contact-icon mb-3">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <h2 class="text-white mb-4">Location</h2>
+                    <p class="neon-text">
+                        123 Main Street<br>
+                        Gulberg III, Lahore<br>
+                        Pakistan
+                    </p>
+                </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-md-4">
+                <div class="neon-booking-container text-center">
+                    <div class="contact-icon mb-3">
+                        <i class="bi bi-telephone-fill"></i>
+                    </div>
+                    <h2 class="text-white mb-4">Need Help?</h2>
+                    <p class="neon-text mb-4">Have questions? We're here to help!</p>
+                    <a href="tel:+923001234567" class="neon-button-secondary">
+                        <i class="bi bi-telephone me-2"></i>
+                        Call Us
+                    </a>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="col-md-4">
+                <div class="neon-booking-container text-center">
+                    <div class="contact-icon mb-3">
+                        <i class="bi bi-instagram"></i>
+                    </div>
+                    <h2 class="text-white mb-4">Follow Us</h2>
+                    <a href="https://instagram.com/your-handle" target="_blank" class="neon-button-secondary">
+                        <i class="bi bi-instagram me-2"></i>
+                        @thecourts
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<div class="quick-actions mb-4">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Book a Court</h5>
-                    <p class="card-text">Reserve your preferred court now</p>
-                    <a href="{% url 'courts:booking' %}" class="btn btn-primary">Book Now</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Check Booking Status</h5>
-                    <p class="card-text">Track your booking using reference number</p>
-                    <a href="{% url 'courts:booking_status' %}" class="btn btn-secondary">Check Status</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block extra_css %}
+{{ block.super }}
+<style>
+    .status-checker-form {
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
+        gap: 15px;
+    }
+
+    .neon-input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(204, 228, 75, 0.3);
+        border-radius: 25px;
+        padding: 15px 25px;
+        color: #fff;
+        font-size: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .neon-input:focus {
+        outline: none;
+        border-color: rgba(204, 228, 75, 0.8);
+        box-shadow: 0 0 15px rgba(204, 228, 75, 0.3);
+    }
+
+    .neon-button-secondary {
+        background: transparent;
+        border: 2px solid rgba(204, 228, 75, 0.5);
+        color: rgba(204, 228, 75, 0.9);
+        padding: 15px 30px;
+        border-radius: 25px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .neon-button-secondary:hover {
+        background: rgba(204, 228, 75, 0.1);
+        box-shadow: 0 0 20px rgba(204, 228, 75, 0.3);
+    }
+
+    .booking-results {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 30px;
+        border: 1px solid rgba(204, 228, 75, 0.2);
+    }
+
+    .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        text-align: left;
+    }
+
+    .result-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .result-label {
+        color: rgba(204, 228, 75, 0.7);
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .result-value {
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .neon-error {
+        color: #ff6b6b;
+        font-size: 16px;
+        padding: 10px;
+        border-radius: 5px;
+        background: rgba(255, 107, 107, 0.1);
+        border: 1px solid rgba(255, 107, 107, 0.3);
+    }
+
+    .status-pending {
+        background: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        padding: 5px 15px;
+        border-radius: 15px;
+    }
+
+    .status-approved {
+        background: rgba(40, 167, 69, 0.2);
+        color: #28a745;
+        padding: 5px 15px;
+        border-radius: 15px;
+    }
+
+    .status-rejected {
+        background: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        padding: 5px 15px;
+        border-radius: 15px;
+    }
+
+    /* Hero Section Background */
+    #section_1 {
+        background-color: #000;
+    }
+
+    /* Our Facilities Section Background */
+    #section_3.frame-gallery {
+        background-color: #000;
+        padding: 80px 0;
+    }
+
+    /* Booking and Track Sections Background */
+    .neon-booking-section {
+        background-color: #000;
+    }
+
+    /* Ensure text remains visible on dark backgrounds */
+    .hero-text h2 {
+        color: #000;
+        font-weight: bold;
+        background-color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        display: inline-block;
+        margin-bottom: 2rem;
+    }
+
+    /* Optional: Adjust section dividers if needed */
+    .section-divider {
+        background-color: #fff;
+        height: 2px;
+        opacity: 0.2;
+        margin: 20px 0;
+    }
+
+    /* Add this new style for the button hover effect */
+    .custom-btn.btn.custom-link {
+        transition: all 0.3s ease;
+    }
+
+    .custom-btn.btn.custom-link:hover {
+        background-color: white;
+        color: black;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Update the feature modules */
+    .feature-module {
+        background-color: rgb(81, 164, 81);
+        color: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        margin-bottom: 1rem;
+    }
+
+    .feature-module:hover {
+        background-color: #000;
+        color: #fff;
+        transform: translateY(-5px);
+        box-shadow: 0 0 20px rgba(81, 164, 81, 0.3);
+    }
+
+    .feature-module h3,
+    .feature-module h4 {
+        color: #fff;
+    }
+
+    .feature-module:hover h3,
+    .feature-module:hover h4 {
+        color: #fff;
+    }
+
+    /* Adjust the check icons */
+    .feature-module .bi-check-circle {
+        color: #fff;
+    }
+
+    .feature-module:hover .bi-check-circle {
+        color: rgb(81, 164, 81);
+    }
+
+    /* About section background */
+    #section_2.about {
+        background-color: #000;
+    }
+
+    /* Update section dividers */
+    .section-divider {
+        background-color: #fff;
+        height: 2px;
+        opacity: 0.2;
+        margin: 20px 0;
+    }
+
+    /* Add specific spacing for the divider after section_2 */
+    #section_2 + .section-divider {
+        margin-top: 50px;  /* Increased space after the feature modules */
+    }
+
+    /* Contact Section Styles */
+    .contact-icon {
+        font-size: 2.5rem;
+        color: rgba(204, 228, 75, 0.9);
+        text-shadow: 0 0 10px rgba(204, 228, 75, 0.5);
+    }
+
+    .neon-text {
+        color: #fff;
+        font-size: 1.2rem;
+        line-height: 1.8;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Update container styles for consistent height */
+    .neon-booking-container {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(204, 228, 75, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 1rem 0;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+    .neon-booking-container:hover {
+        border-color: rgba(204, 228, 75, 0.5);
+        box-shadow: 0 0 20px rgba(204, 228, 75, 0.2);
+    }
+
+    /* Add this to ensure the row maintains equal heights */
+    #section_6 .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    #section_6 .col-md-4 {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #section_6 .neon-booking-container {
+        flex: 1;
+        width: 100%;
+    }
+</style>
+{% endblock %}
 {% endblock %}
